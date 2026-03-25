@@ -9,9 +9,17 @@ CREATE TABLE Users (
     Role VARCHAR(50) NOT NULL
 );
 
+-- City table
+CREATE TABLE City (
+    CityID SERIAL PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    IsInternational BOOLEAN NOT NULL DEFAULT FALSE
+);
+
 -- Crew table
 CREATE TABLE Crew (
-    CrewID SERIAL PRIMARY KEY
+    CrewID SERIAL PRIMARY KEY,
+    CrewCapacity INT NOT NULL
 );
 
 -- Flights table
@@ -30,7 +38,7 @@ CREATE TABLE Flights (
 
 -- Booking table
 CREATE TABLE Booking (
-    BookID SERIAL,
+    BookID SERIAL PRIMARY KEY,
     UserID INT REFERENCES Users(UserID),
     Flight1 INT REFERENCES Flights(FlightID),
     Flight2 INT REFERENCES Flights(FlightID),
@@ -40,28 +48,23 @@ CREATE TABLE Booking (
     Via VARCHAR(100),
     ToLocation VARCHAR(100) NOT NULL,
     NumSeatsBook INT NOT NULL,
-    DateOfFlight DATE NOT NULL,
-    PRIMARY KEY (BookID, UserID)
+    DateOfFlight DATE NOT NULL
 );
 
 -- Passengers table
 CREATE TABLE Passengers (
     PNR SERIAL PRIMARY KEY,
-    BookingID INT NOT NULL,
-    UserID INT NOT NULL,
+    BookingID INT NOT NULL REFERENCES Booking(BookID),
     PassName VARCHAR(200) NOT NULL,
     Seat1 VARCHAR(10),
     Seat2 VARCHAR(10),
-    Passport VARCHAR(50) NOT NULL,
-    FOREIGN KEY (BookingID, UserID) REFERENCES Booking(BookID, UserID)
+    Passport VARCHAR(50) NOT NULL
 );
 
 -- Cancellations table
 CREATE TABLE Cancellations (
     CancellationID SERIAL PRIMARY KEY,
-    BookID INT NOT NULL,
-    UserID INT NOT NULL,
+    BookID INT NOT NULL REFERENCES Booking(BookID),
     CancellationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    RefundAmt DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (BookID, UserID) REFERENCES Booking(BookID, UserID)
+    RefundAmt DECIMAL(10, 2) NOT NULL
 );
