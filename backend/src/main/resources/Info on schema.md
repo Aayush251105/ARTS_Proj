@@ -10,6 +10,6 @@
 * `Flights.CrewID` → `Crew.CrewID`
 * `Booking.UserID` → `Users.UserID`
 * `Booking.Flight1/Flight2` → `Flights.FlightID`
-* `Passengers` and `Cancellations` → `Booking(BookID, UserID)`
+* `Passengers` and `Cancellations` → `Booking(BookID)`
 
 The schema is now in your query file and ready to execute.
