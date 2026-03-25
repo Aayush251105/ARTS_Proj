@@ -1,5 +1,6 @@
 -- Flight Booking System Schema
 
+-- Users table
 CREATE TABLE Users (
     UserID SERIAL PRIMARY KEY,
     Username VARCHAR(100) NOT NULL UNIQUE,
@@ -8,17 +9,20 @@ CREATE TABLE Users (
     Role VARCHAR(50) NOT NULL
 );
 
+-- City table
 CREATE TABLE City (
     CityID SERIAL PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
     IsInternational BOOLEAN NOT NULL DEFAULT FALSE
 );
 
+-- Crew table
 CREATE TABLE Crew (
     CrewID SERIAL PRIMARY KEY,
     CrewCapacity INT NOT NULL
 );
 
+-- Flights table
 CREATE TABLE Flights (
     FlightID SERIAL PRIMARY KEY,
     FromLocation VARCHAR(100) NOT NULL,
@@ -32,6 +36,7 @@ CREATE TABLE Flights (
     CrewID INT REFERENCES Crew(CrewID)
 );
 
+-- Booking table
 CREATE TABLE Booking (
     BookID SERIAL PRIMARY KEY,
     UserID INT REFERENCES Users(UserID),
@@ -46,6 +51,7 @@ CREATE TABLE Booking (
     DateOfFlight DATE NOT NULL
 );
 
+-- Passengers table
 CREATE TABLE Passengers (
     PNR SERIAL PRIMARY KEY,
     BookingID INT NOT NULL REFERENCES Booking(BookID),
@@ -55,6 +61,7 @@ CREATE TABLE Passengers (
     Passport VARCHAR(50) NOT NULL
 );
 
+-- Cancellations table
 CREATE TABLE Cancellations (
     CancellationID SERIAL PRIMARY KEY,
     BookID INT NOT NULL REFERENCES Booking(BookID),
