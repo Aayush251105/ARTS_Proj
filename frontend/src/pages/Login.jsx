@@ -1,5 +1,7 @@
 import { useState } from "react";
 import "../styles/signup.css"; // reuse same styles
+// Handelling submit 
+  import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [form, setForm] = useState({
@@ -11,12 +13,46 @@ function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Handelling submit 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Login data:", form);
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
-    // API call (we connect later)
+      const data = await res.text();
+
+      if (data.startsWith("SUCCESS")) {
+        const parts = data.split(":");
+        const userId = parts[1];
+        const role = parts[2];
+
+        // store temporarily
+        localStorage.setItem("userId", userId);
+        localStorage.setItem("role", role);
+
+        // redirect based on role
+        if (role === "ADMIN") {
+          navigate("/admin");
+        } else {
+          navigate("/");
+        }
+
+      } else {
+        alert(data);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
   };
 
   return (

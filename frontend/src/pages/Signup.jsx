@@ -1,5 +1,7 @@
 import { useState } from "react";
 import "../styles/signup.css";
+// handle submit
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
   const [form, setForm] = useState({
@@ -13,12 +15,36 @@ function Signup() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // handle on submit 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Sending data:", form);
+    try {
+      const res = await fetch("http://localhost:8080/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...form,
+          role: "PASSENGER",
+        }),
+      });
 
-    // API call (we connect later)
+      const data = await res.text();
+
+      if (data === "SUCCESS") {
+        alert("Signup successful!");
+        navigate("/login"); // redirect
+      } else {
+        alert(data); // show backend error
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
   };
 
   return (
