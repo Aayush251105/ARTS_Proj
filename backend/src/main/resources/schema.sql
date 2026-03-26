@@ -1,29 +1,29 @@
 -- Flight Booking System Schema
 
 -- Users table
-CREATE TABLE Users (
+CREATE TABLE IF NOT EXISTS Users (
     UserID SERIAL PRIMARY KEY,
     Username VARCHAR(100) NOT NULL UNIQUE,
     Password VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
-    Role VARCHAR(50) NOT NULL
+    Role VARCHAR(50) NOT NULL DEFAULT 'PASSENGER' CHECK (Role IN ('ADMIN', 'PASSENGER'))
 );
 
 -- City table
-CREATE TABLE City (
+CREATE TABLE IF NOT EXISTS City (
     CityID SERIAL PRIMARY KEY,
     Name VARCHAR(100) NOT NULL,
     IsInternational BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- Crew table
-CREATE TABLE Crew (
+CREATE TABLE IF NOT EXISTS Crew (
     CrewID SERIAL PRIMARY KEY,
     CrewCapacity INT NOT NULL
 );
 
 -- Flights table
-CREATE TABLE Flights (
+CREATE TABLE IF NOT EXISTS Flights (
     FlightID SERIAL PRIMARY KEY,
     FromLocation VARCHAR(100) NOT NULL,
     ToLocation VARCHAR(100) NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE Flights (
 );
 
 -- Booking table
-CREATE TABLE Booking (
+CREATE TABLE IF NOT EXISTS Booking (
     BookID SERIAL PRIMARY KEY,
     UserID INT REFERENCES Users(UserID),
     Flight1 INT REFERENCES Flights(FlightID),
@@ -52,7 +52,7 @@ CREATE TABLE Booking (
 );
 
 -- Passengers table
-CREATE TABLE Passengers (
+CREATE TABLE IF NOT EXISTS Passengers (
     PNR SERIAL PRIMARY KEY,
     BookingID INT NOT NULL REFERENCES Booking(BookID),
     PassName VARCHAR(200) NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE Passengers (
 );
 
 -- Cancellations table
-CREATE TABLE Cancellations (
+CREATE TABLE IF NOT EXISTS Cancellations (
     CancellationID SERIAL PRIMARY KEY,
     BookID INT NOT NULL REFERENCES Booking(BookID),
     CancellationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
