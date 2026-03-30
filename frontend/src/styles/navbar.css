@@ -52,6 +52,12 @@
     color: white !important;
 }
 
+/* Add to your existing navbar.css */
+.nav-logout-btn:hover {
+    background-color: #DC2626 !important; /* Darker Red */
+    transform: translateY(-1px);
+}
+
 .signup-btn {
     background-color: #10B981 !important; /* Available Green */
     color: white !important;

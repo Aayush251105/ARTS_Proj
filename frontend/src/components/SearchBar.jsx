@@ -22,9 +22,7 @@ function SearchBar() {
   }, []);
 
   const handleCityChange = (e, type) => {
-    const selectedCity = cities.find(
-      (c) => c.cityId === parseInt(e.target.value)
-    );
+    const selectedCity = cities.find((c) => c.cityId === parseInt(e.target.value));
     setForm({ ...form, [type]: selectedCity });
   };
 
@@ -45,58 +43,52 @@ function SearchBar() {
   return (
     <div className="search-container">
       <form className="search-box" onSubmit={handleSearch}>
+        <h2>Find Your Flight</h2>
         
-        {/* FROM */}
-        <select 
-          onChange={(e) => handleCityChange(e, "from")} 
-          required
-        >
-          <option value="">From</option>
-          {cities.map((city) => (
-            <option key={city.cityId} value={city.cityId}>
-              {city.name}
-            </option>
-          ))}
-        </select>
+        <div className="search-grid">
+          {/* FROM */}
+          <div className="input-group">
+            <label>From</label>
+            <select onChange={(e) => handleCityChange(e, "from")} required>
+              <option value="">Select Source</option>
+              {cities.map((city) => (
+                <option key={city.cityId} value={city.cityId}>{city.name}</option>
+              ))}
+            </select>
+          </div>
 
-        {/* TO */}
-        <select
-          onChange={(e) => handleCityChange(e, "to")} 
-          required
-        >
-          <option value="">To</option>
-          {cities.map((city) => (
-            <option key={city.cityId} value={city.cityId}>
-              {city.name}
-            </option>
-          ))}
-        </select>
+          {/* TO */}
+          <div className="input-group">
+            <label>To</label>
+            <select onChange={(e) => handleCityChange(e, "to")} required>
+              <option value="">Select Destination</option>
+              {cities.map((city) => (
+                <option key={city.cityId} value={city.cityId}>{city.name}</option>
+              ))}
+            </select>
+          </div>
 
-        {/* DATE */}
-        <input 
-          type="date" 
-          name="date" 
-          onChange={handleChange} 
-          required 
-        />
+          {/* DATE */}
+          <div className="input-group">
+            <label>Departure Date</label>
+            <input type="date" name="date" onChange={handleChange} required />
+          </div>
 
-        {/* PASSENGERS */}
-        <input
-          type="number"
-          name="passengers"
-          min="1"
-          placeholder="Passengers"
-          onChange={handleChange}
-        />
+          {/* PASSENGERS & CLASS (Combined Row) */}
+          <div className="input-group">
+            <label>Travelers & Class</label>
+            <div className="combined-inputs">
+                <input type="number" name="passengers" min="1" placeholder="1" onChange={handleChange} style={{flex: 1}} />
+                <select name="travelClass" onChange={handleChange} style={{flex: 2}}>
+                  <option value="ECONOMY">Economy</option>
+                  <option value="BUSINESS">Business</option>
+                  <option value="FIRST">First</option>
+                </select>
+            </div>
+          </div>
+        </div>
 
-        {/* CLASS */}
-        <select name="travelClass" onChange={handleChange}>
-          <option value="ECONOMY">Economy</option>
-          <option value="BUSINESS">Business</option>
-          <option value="FIRST">First</option>
-        </select>
-
-        <button type="submit">Search Flights</button>
+        <button type="submit" className="search-btn">Search Flights</button>
       </form>
     </div>
   );

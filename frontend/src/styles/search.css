@@ -1,60 +1,122 @@
-/* search.css */
+/* search.css - High Specificity Version */
+
+/* 1. THE "ANTI-GREY" CLEANUP 
+   Forces all child elements to be transparent so the white card shows through */
+.search-box,
+.search-box *,
+.search-box h2, 
+.search-box label, 
+.search-box .search-grid,
+.search-box .input-group,
+.search-box .combined-inputs {
+    background-color: transparent !important;
+}
+
+/* 2. MAIN CONTAINER */
 .search-container {
-    height: 60vh;
     display: flex;
     justify-content: center;
-    align-items: center;
-    background-color: #F9FAFB !important; /* System Background */
+    align-items: flex-start;
+    padding-top: 80px; /* Space from Navbar */
+    background-color: #F9FAFB !important; /* Page Background */
+    min-height: calc(100vh - 70px); /* Fill screen below Navbar */
 }
 
+/* 3. SEARCH CARD (The "Box") */
 .search-box {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 16px;
+    background-color: #FFFFFF !important; /* Force White Card */
+    width: 90%;
+    max-width: 800px; /* Per spec: 700-900px */
     padding: 32px;
-    background: #FFFFFF !important; /* Card White */
-    border-radius: 12px; 
+    border-radius: 12px;
     border: 1px solid #E5E7EB !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
-/* Modernizing inputs & fixing the grey dropdown issue */
-.search-box select, 
-.search-box input {
-    padding: 12px;
-    border: 1px solid #E5E7EB !important;
-    border-radius: 8px !important;
+.search-box h2 {
+    color: #111827 !important;
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: left;
+}
+
+/* 4. THE GRID LAYOUT */
+.search-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2-column layout */
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
     font-size: 14px;
-    color: #111827 !important; /* Text Dark */
-    background-color: #FFFFFF !important; /* Force white background */
-    outline: none;
-}
-
-/* Specific fix for the dropdown list items */
-.search-box select option {
-    background-color: #FFFFFF !important;
+    font-weight: 600;
     color: #111827 !important;
 }
 
-.search-box select:focus, 
-.search-box input:focus {
-    border-color: #3B82F6 !important; /* Selected Blue */
+/* 5. INPUT FIELDS & SELECTORS */
+.input-group select, 
+.input-group input {
+    padding: 12px;
+    border: 1px solid #E5E7EB !important;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #111827 !important;
+    outline: none;
+    background-color: #FFFFFF !important; /* Keep input boxes pure white */
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* Button Styling */
-.search-box button {
-    background-color: #10B981 !important; /* Available Green */
+.input-group select:focus, 
+.input-group input:focus {
+    border-color: #3B82F6 !important;
+}
+
+.combined-inputs {
+    display: flex;
+    gap: 8px;
+}
+
+/* 6. SEARCH BUTTON - Success Green */
+.search-btn {
+    background-color: #10B981 !important; /* Success Green */
     color: white !important;
-    font-weight: 700;
-    padding: 0 24px;
-    height: 48px; /* Slightly taller for modern look */
+    padding: 16px;
     border: none !important;
-    border-radius: 8px !important;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 10px;
 }
 
-.search-box button:hover {
-    background-color: #059669 !important;
+.search-btn:hover {
+    background-color: #059669 !important; /* Slightly darker green */
     transform: translateY(-1px);
+}
+
+.search-btn:active {
+    transform: translateY(0);
+}
+
+/* 7. RESPONSIVE FIX (Stack on small screens) */
+@media (max-width: 600px) {
+    .search-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-container {
+        padding-top: 40px;
+    }
 }
