@@ -17,10 +17,10 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BookID")
-    private Long bookId;
+    private Integer bookId;
 
     @Column(name = "UserID")
-    private Long userId;
+    private Integer userId;
 
     @Column(name = "SeatClass")
     private String seatClass;
@@ -41,11 +41,11 @@ public class Booking {
     private Integer numSeatsBook;
 
     // --- MANUAL GETTERS (Crucial for JSON) ---
-    public Long getBookId() { return bookId; }
-    public void setBookId(Long bookId) { this.bookId = bookId; }
+    public Integer getBookId() { return bookId; }
+    public void setBookId(Integer bookId) { this.bookId = bookId; }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public Integer getUserId() { return userId; }
+    public void setUserId(Integer userId) { this.userId = userId; }
 
     public String getSeatClass() { return seatClass; }
     public void setSeatClass(String seatClass) { this.seatClass = seatClass; }

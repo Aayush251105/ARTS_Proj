@@ -13,7 +13,7 @@ public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "cityid")   // map to existing column
-    private Long cityId;
+    private Integer cityId;
 
     @Column(name = "name")
     private String name;
