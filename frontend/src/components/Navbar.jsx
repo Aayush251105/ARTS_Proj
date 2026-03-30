@@ -33,9 +33,16 @@ function Navbar() {
             </Link>
           </>
         ) : (
-          <button className="login-btn" onClick={handleLogout}>
-            Logout
-          </button>
+          <>
+            {/* The new Profile button */}
+            <Link to="/profile">
+              <button className="login-btn">Profile</button>
+            </Link>
+
+            <button className="login-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          </>
         )}
       </div>
     </nav>

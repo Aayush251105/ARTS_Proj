@@ -15,20 +15,20 @@ import com.team26.backend.repository.BookingRepository;
 
 @RestController
 @RequestMapping("/api/bookings")
-@CrossOrigin(origins = "http://localhost:5173") // Crucial: Allows React to talk to Java
+@CrossOrigin(origins = "http://localhost:5173")
 public class BookingController {
 
     @Autowired
     private BookingRepository bookingRepository;
 
-    // This defines the URL: http://localhost:8080/api/bookings/user/{id}
     @GetMapping("/user/{userId}")
-    public List<Booking> getBookingsByUserId(@PathVariable Long userId) {
-        return bookingRepository.findByUserId(userId);
+    public List<Booking> getBookingsByUserId(@PathVariable Integer userId) {
+        // CHANGED: Now calls the method that checks for cancellation status
+        return bookingRepository.findByUserIdWithStatus(userId);
     }
 
     @DeleteMapping("/{bookId}")
-    public void deleteBooking(@PathVariable Long bookId) {
+    public void deleteBooking(@PathVariable Integer bookId) {
         bookingRepository.deleteById(bookId);
     }
 }

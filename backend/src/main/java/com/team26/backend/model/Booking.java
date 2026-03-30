@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "Booking")
@@ -17,10 +18,10 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BookID")
-    private Long bookId;
+    private Integer bookId;
 
     @Column(name = "UserID")
-    private Long userId;
+    private Integer userId;
 
     @Column(name = "SeatClass")
     private String seatClass;
@@ -40,12 +41,16 @@ public class Booking {
     @Column(name = "NumSeatsBook")
     private Integer numSeatsBook;
 
-    // --- MANUAL GETTERS (Crucial for JSON) ---
-    public Long getBookId() { return bookId; }
-    public void setBookId(Long bookId) { this.bookId = bookId; }
+    // --- NEW FIELD FOR UI ---
+    @Transient // This field is NOT in the DB table, it's just for the Frontend
+    private String status;
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    // --- EXISTING GETTERS/SETTERS ---
+    public Integer getBookId() { return bookId; }
+    public void setBookId(Integer bookId) { this.bookId = bookId; }
+
+    public Integer getUserId() { return userId; }
+    public void setUserId(Integer userId) { this.userId = userId; }
 
     public String getSeatClass() { return seatClass; }
     public void setSeatClass(String seatClass) { this.seatClass = seatClass; }
@@ -64,4 +69,8 @@ public class Booking {
 
     public Integer getNumSeatsBook() { return numSeatsBook; }
     public void setNumSeatsBook(Integer numSeatsBook) { this.numSeatsBook = numSeatsBook; }
+
+    // --- NEW GETTER/SETTER ---
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }

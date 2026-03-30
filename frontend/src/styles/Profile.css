@@ -1,20 +1,37 @@
 /* Profile.css */
-.profile-container {
-    background-color: #f1f5f9 !important; /* Forces a clean, light blue-grey */
+
+/* 1. TOP LEVEL WRAPPER - Force full width and background */
+.profile-page-wrapper {
+    /* 1. Viewport Width forces it to ignore the 1126px limit of #root */
+    width: 100vw !important; 
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    
+    background-color: #f1f5f9 !important; 
     min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    overflow-y: auto !important; 
+    z-index: 1;
+    min-height: 100vh;
+    padding-bottom: 100px; /* New: Gives space so the last box isn't cut off */
+    display: block; /* New: Changed from flex to block to allow natural scrolling */
+}
+
+.profile-container {
+    margin: 0 auto; /* New: Centers the content now that parent is block */
+    width: 100%;
+    max-width: 1000px;
     padding: 40px 20px;
-    margin: 0; /* Remove any default margins */
 }
 
-.profile-card {
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-/* Header Section */
+/* 2. HEADER SECTION - Deep Blue */
 .user-header {
-    background: #1e40af; /* Deep Blue */
-    color: white;
+    background: #1e40af !important; 
+    color: white !important;
     padding: 30px;
     border-radius: 20px;
     display: flex;
@@ -23,16 +40,15 @@
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 20px;
+/* Kill grey on all header sub-elements */
+.user-info, .user-info * {
+    background-color: transparent !important;
 }
 
 .avatar-circle {
     width: 70px;
     height: 70px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.2) !important;
     border-radius: 15px;
     display: flex;
     align-items: center;
@@ -41,57 +57,85 @@
     font-weight: 800;
 }
 
+.section-title {
+    color: #1e293b !important;
+    background-color: transparent !important;
+    margin: 30px 0 20px 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: left; /* Keeps it aligned with the cards */
+}
+
+/* 3. FLIGHT CARDS - Pure White */
 .flight-card {
-    background-color: #ffffff !important; /* Forces the box to be WHITE */
+    background-color: #ffffff !important; 
     margin-top: 20px;
     padding: 30px;
     border-radius: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid #e2e8f0;
-    /* This makes it pop against the background */
+    border: 1px solid #e2e8f0 !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); 
+    transition: transform 0.2s ease;
 }
 
 .flight-card:hover {
     transform: translateY(-3px);
-    border-color: #3b82f6;
+    border-color: #3b82f6 !important;
 }
 
-.route-section {
+/* 4. CONTENT WRAPPERS - Killing inherited grey */
+.route-section, 
+.city-box, 
+.action-section, 
+.price-info {
+    background-color: transparent !important;
     display: flex;
-    align-items: center;
-    gap: 30px;
 }
+
+.route-section { align-items: center; gap: 30px; }
+.action-section { align-items: center; gap: 24px; }
+.price-info { flex-direction: column; text-align: right; }
 
 .city-box h3 {
-    color: #1e293b;
-    margin-bottom: 4px;
+    color: #1e293b !important;
+    background-color: transparent !important;
+    margin: 0 0 4px 0;
 }
 
 .city-box span {
     font-size: 0.7rem;
-    color: #94a3b8;
+    color: #94a3b8 !important;
+    background-color: transparent !important;
     text-transform: uppercase;
     font-weight: bold;
 }
 
 .plane-divider {
-    color: #3b82f6;
+    color: #3b82f6 !important;
+    background-color: transparent !important;
     font-size: 1.2rem;
 }
 
 .price-tag {
-    color: #1e40af;
+    color: #1e40af !important;
+    background-color: transparent !important;
     font-size: 1.5rem;
     font-weight: 800;
 }
 
+.flight-date {
+    color: #64748b !important;
+    background-color: transparent !important;
+    font-size: 0.85rem;
+}
+
+/* 5. BUTTONS */
 .cancel-btn {
-    background: #fee2e2;
-    color: #ef4444;
-    border: none;
+    background-color: #fee2e2 !important;
+    color: #ef4444 !important;
+    border: none !important;
     padding: 8px 16px;
     border-radius: 8px;
     font-weight: bold;
@@ -100,6 +144,51 @@
 }
 
 .cancel-btn:hover {
-    background: #ef4444;
-    color: white;
+    background-color: #ef4444 !important;
+    color: white !important;
+}
+
+/* 6. CANCELLATION STATES */
+.cancelled-card {
+    opacity: 0.7;
+    background-color: #f8fafc !important;
+    border-left: 6px solid #ef4444 !important;
+    pointer-events: none;
+    transform: none !important;
+}
+
+.cancelled-badge {
+    color: #ef4444 !important;
+    background-color: transparent !important;
+    font-weight: 800;
+    font-size: 0.7rem;
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.refund-status {
+    color: #10b981 !important;
+    background-color: #ecfdf5 !important;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border: 1.5px solid #10b981 !important;
+    border-radius: 8px;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.price-tag-cancelled {
+    text-decoration: line-through !important;
+    color: #94a3b8 !important;
+    font-size: 1.2rem !important;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #94a3b8 !important;
+    background-color: transparent !important;
+    margin-top: 50px;
+    font-style: italic;
 }

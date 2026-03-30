@@ -23,3 +23,9 @@ consider 100 seats
 first 20% - first class (1 - 20)
 next 20% - business class (21 - 40)
 rest 40% - economy class (41 - 100)
+
+# Refund Logic (i forgor the actual one, we can change later)
+75% for 2+ days remaining
+50% for 1-2 days remaining
+25% for 12-24 hrs remaining
+0% for less than 12 hrs remaining

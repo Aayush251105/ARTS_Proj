@@ -3,8 +3,8 @@ package com.team26.backend.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.team26.backend.model.City;
+import com.team26.backend.model.Cancellation;
 
 @Repository
-public interface CityRepository extends JpaRepository<City, Integer> {
+public interface CancellationRepository extends JpaRepository<Cancellation, Integer> {
 }
