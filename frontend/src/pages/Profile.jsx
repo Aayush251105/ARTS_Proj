@@ -30,6 +30,7 @@ const Profile = () => {
       try {
         await axios.delete(`http://localhost:8080/api/bookings/${bookId}`);
         setBookings(bookings.filter(b => b.bookId !== bookId));
+      // eslint-disable-next-line no-unused-vars
       } catch (err) { alert("Error connecting to server."); }
     }
   };
