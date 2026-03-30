@@ -1,6 +1,7 @@
 package com.team26.backend.service;
 
 import org.springframework.stereotype.Service;
+
 import com.team26.backend.model.User;
 import com.team26.backend.repository.UserRepository;
 
@@ -56,7 +57,7 @@ public class AuthService {
             return "Invalid password";
         }
 
-        // ✅ success
-        return "SUCCESS:" + user.getUserId() + ":" + user.getRole();
+        // ✅ success - now including the username
+        return "SUCCESS:" + user.getUserId() + ":" + user.getRole() + ":" + user.getUsername();
     }
 }

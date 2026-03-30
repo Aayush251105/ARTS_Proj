@@ -34,10 +34,12 @@ function Login() {
         const parts = data.split(":");
         const userId = parts[1];
         const role = parts[2];
+        const username = parts[3]; // <--- This is the new part from Java
 
         // store temporarily
         localStorage.setItem("userId", userId);
         localStorage.setItem("role", role);
+        localStorage.setItem("username", username); // <--- Save it here!
 
         window.location.href = "/"; // force refresh
         // redirect based on role
