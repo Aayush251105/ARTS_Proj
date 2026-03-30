@@ -39,6 +39,7 @@ function Login() {
         localStorage.setItem("userId", userId);
         localStorage.setItem("role", role);
 
+        window.location.href = "/"; // force refresh
         // redirect based on role
         if (role === "ADMIN") {
           navigate("/admin");
