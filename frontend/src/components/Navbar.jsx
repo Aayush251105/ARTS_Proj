@@ -1,52 +1,41 @@
-import "../styles/navbar.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import '../styles/navbar.css';
 
-function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(
-    !!localStorage.getItem("userId")
-  );
-
+const Navbar = () => {
   const navigate = useNavigate();
+  const username = localStorage.getItem("username");
 
   const handleLogout = () => {
-    localStorage.removeItem("userId");
-    localStorage.removeItem("role");
-
-    setIsLoggedIn(false);
-    navigate("/");
+    localStorage.clear();
+    navigate('/login');
   };
 
   return (
     <nav className="navbar">
-      <div className="logo">ARTS</div>
+      <div className="logo-container">
+        <Link to="/" className="logo">ARTS</Link>
+      </div>
 
       <div className="nav-links">
-        {!isLoggedIn ? (
+        {username ? (
           <>
-            <Link to="/login">
-              <button className="login-btn">Login</button>
-            </Link>
-
-            <Link to="/signup">
-              <button className="signup-btn">Sign Up</button>
-            </Link>
+            <button className="nav-profile-btn" onClick={() => navigate('/profile')}>
+              {username}'s Profile
+            </button>
+            <button className="nav-logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
           </>
         ) : (
           <>
-            {/* The new Profile button */}
-            <Link to="/profile">
-              <button className="login-btn">Profile</button>
-            </Link>
-
-            <button className="login-btn" onClick={handleLogout}>
-              Logout
-            </button>
+            <button className="login-btn" onClick={() => navigate('/login')}>Login</button>
+            <button className="signup-btn" onClick={() => navigate('/signup')}>Sign Up</button>
           </>
         )}
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;

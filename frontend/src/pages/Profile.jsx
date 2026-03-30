@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/Profile.css';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
+  const navigate = useNavigate();
+  
   const [user] = useState(() => {
     const userId = localStorage.getItem("userId");
     const role = localStorage.getItem("role");
     const username = localStorage.getItem("username");
-    return userId ? { userID: userId, role, username: username || "Passenger" } : null;
+    return userId ? { userID: userId, role, username: username || "Neil" } : null;
   });
   
   const [bookings, setBookings] = useState([]);
@@ -43,14 +46,7 @@ const Profile = () => {
   const handleCancel = async (booking) => {
     const refund = calculateExpectedRefund(booking.dateOfFlight, booking.bookingPrice);
     
-    const confirmMsg = `Are you sure you want to cancel your flight to ${booking.toLocation}?
-    
-------------------------------------
-Refund Policy Applied:
-Time Remaining: ${((new Date(booking.dateOfFlight) - new Date()) / (1000*60*60)).toFixed(1)} hours
-Refund Percentage: ${refund.percent}%
-Estimated Refund: ₹${refund.amount.toFixed(2)}
-------------------------------------`;
+    const confirmMsg = `Are you sure you want to cancel your flight to ${booking.toLocation}?\n\nRefund Policy Applied:\nRefund Percentage: ${refund.percent}%\nEstimated Refund: ₹${refund.amount.toFixed(2)}`;
 
     if (window.confirm(confirmMsg)) {
       try {
@@ -65,12 +61,8 @@ Estimated Refund: ₹${refund.amount.toFixed(2)}
   };
 
   useEffect(() => {
-      // 1. When the Profile page loads, force the body to scroll
       document.documentElement.style.overflow = 'auto';
       document.body.style.overflow = 'auto';
-
-      // 2. Clean up: When you leave the Profile page, put it back 
-      // (so your teammates' splash screen stays the way they want)
       return () => {
         document.documentElement.style.overflow = 'hidden';
         document.body.style.overflow = 'hidden';
@@ -82,60 +74,65 @@ Estimated Refund: ₹${refund.amount.toFixed(2)}
   return (
     <div className="profile-page-wrapper">
       <div className="profile-container">
-        <div className="profile-card">
-          
-          {/* Header Section - Duplicate Logout Removed */}
-          <div className="user-header">
-            <div className="user-info">
-              <div className="avatar-circle">{user.username[0].toUpperCase()}</div>
-              <div>
-                <h1 style={{margin: 0}}>Welcome, {user.username}</h1>
-                <small>{user.role} Account • ID: {user.userID}</small>
-              </div>
+        
+        {/* --- UPDATED HEADER WITH BACK BUTTON --- */}
+        <div className="user-header">
+          <div className="user-info">
+            <div className="avatar-circle">{user.username[0].toUpperCase()}</div>
+            <div>
+              <h1 style={{margin: 0, color: 'white'}}>Welcome, {user.username}</h1>
+              <small style={{color: 'rgba(255,255,255,0.8)'}}>{user.role} Account • ID: {user.userID}</small>
             </div>
           </div>
-
-          {/* List of Flights */}
-          <h2 className="section-title">Your Trips</h2>
           
-          {bookings.map((b) => {
-            const isCancelled = cancelledIds.includes(b.bookId) || b.status === 'CANCELLED';
+          {/* THE BUTTON IS NOW HERE IN THE MAIN RETURN */}
+          <button className="back-home-btn" onClick={() => navigate('/')}>
+            ← Back to Home
+          </button>
+        </div>
 
-            return (
-              <div key={b.bookId} className={`flight-card ${isCancelled ? 'cancelled-card' : ''}`}>
-                <div className="route-section">
-                  <div className="city-box">
-                    {isCancelled && <span className="cancelled-badge">CANCELLED</span>}
-                    <h3>{b.fromLocation}</h3>
-                    <span>Origin</span>
-                  </div>
-                  <div className="plane-divider">✈</div>
-                  <div className="city-box">
-                    <h3>{b.toLocation}</h3>
-                    <span>Destination</span>
-                  </div>
+        {/* List of Flights */}
+        <h2 className="section-title">
+          Your Booked Trips
+        </h2>
+        
+        {bookings.map((b) => {
+          const isCancelled = cancelledIds.includes(b.bookId) || b.status === 'CANCELLED';
+
+          return (
+            <div key={b.bookId} className={`flight-card ${isCancelled ? 'cancelled-card' : ''}`}>
+              <div className="route-section">
+                <div className="city-box">
+                  {isCancelled && <span className="cancelled-badge">CANCELLED</span>}
+                  <h3>{b.fromLocation}</h3>
+                  <span>Origin</span>
                 </div>
-
-                <div className="action-section">
-                  <div className="price-info">
-                    <div className={`price-tag ${isCancelled ? 'price-tag-cancelled' : ''}`}>
-                      ₹{b.bookingPrice}
-                    </div>
-                    <small className="flight-date">{new Date(b.dateOfFlight).toDateString()}</small>
-                  </div>
-                  
-                  {isCancelled ? (
-                    <span className="refund-status">Refund Processed</span>
-                  ) : (
-                    <button className="cancel-btn" onClick={() => handleCancel(b)}>Cancel</button>
-                  )}
+                <div className="plane-divider">✈</div>
+                <div className="city-box">
+                  <h3>{b.toLocation}</h3>
+                  <span>Destination</span>
                 </div>
               </div>
-            );
-          })}
 
-          {bookings.length === 0 && <p className="empty-msg">No active bookings found.</p>}
-        </div>
+              <div className="action-section">
+                <div className="price-info">
+                  <div className={`price-tag ${isCancelled ? 'price-tag-cancelled' : ''}`}>
+                    ₹{b.bookingPrice}
+                  </div>
+                  <small className="flight-date">{new Date(b.dateOfFlight).toDateString()}</small>
+                </div>
+                
+                {isCancelled ? (
+                  <span className="refund-status">Refund Processed</span>
+                ) : (
+                  <button className="cancel-btn" onClick={() => handleCancel(b)}>Cancel</button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+
+        {bookings.length === 0 && <p className="empty-msg">No active bookings found.</p>}
       </div>
     </div>
   );
