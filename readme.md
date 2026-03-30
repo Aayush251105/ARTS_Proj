@@ -17,3 +17,9 @@ DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO public;
+
+# Seat class logic
+consider 100 seats
+first 20% - first class (1 - 20)
+next 20% - business class (21 - 40)
+rest 40% - economy class (41 - 100)
