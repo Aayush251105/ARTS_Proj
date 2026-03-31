@@ -1,0 +1,210 @@
+/* src/styles/FlightList.css */
+
+.flight-list-page {
+  background: #F9FAFB;
+  min-height: calc(100vh - 60px);
+  padding: 40px 20px;
+}
+
+.flight-list-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.filters-summary {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 16px;
+  color: #6B7280;
+  margin-bottom: 24px;
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.fc-main-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.fc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.fc-airline {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.fc-id {
+  font-size: 13px;
+  color: #6B7280;
+  margin-top: 4px;
+}
+
+.fc-price-wrap {
+  text-align: right;
+}
+
+.fc-discount-badge {
+  background: #10B981;
+  color: #FFFFFF;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.fc-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.fc-price-old {
+  text-decoration: line-through;
+  color: #6B7280;
+  font-size: 15px;
+}
+
+.fc-price-normal {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1E3A8A;
+}
+
+.fc-price-discounted {
+  font-size: 22px;
+  font-weight: 700;
+  color: #10B981;
+}
+
+.fc-route {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.fc-timebox {
+  min-width: 80px;
+}
+
+.fc-time {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.fc-city {
+  font-size: 14px;
+  color: #6B7280;
+  margin-top: 4px;
+}
+
+.fc-duration-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  text-align: center;
+}
+
+.fc-duration-line {
+  width: 100%;
+  height: 2px;
+  background: #E5E7EB;
+  position: relative;
+  margin: 10px 0;
+}
+
+.fc-via {
+  font-size: 12px;
+  color: #6B7280;
+}
+
+.fc-classes {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.fc-class-info {
+  padding: 10px 16px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  background: #FFFFFF;
+  text-align: center;
+  min-width: 100px;
+}
+
+.fc-class-info.selected {
+  background: #3B82F6;
+  border-color: #3B82F6;
+}
+
+.fc-class-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.fc-class-info.selected .fc-class-name {
+  color: #FFFFFF;
+}
+
+.fc-class-seats {
+  font-size: 11px;
+  color: #6B7280;
+  margin-top: 2px;
+}
+
+.fc-class-info.selected .fc-class-seats {
+  color: #E0F2FE; /* Light blue that contrasts well on primary */
+}
+
+.fc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.fc-avail-good { color: #10B981; font-weight: 600; font-size: 14px; }
+.fc-avail-warn { color: #F59E0B; font-weight: 600; font-size: 14px; }
+.fc-avail-bad  { color: #EF4444; font-weight: 600; font-size: 14px; }
+
+.fc-select-btn {
+  background: #3B82F6;
+  color: #FFFFFF;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.fc-select-btn:hover:not(:disabled) {
+  background: #2563EB;
+}
+
+.fc-select-btn:disabled {
+  background: #9CA3AF;
+  cursor: not-allowed;
+}

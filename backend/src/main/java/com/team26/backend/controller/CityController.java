@@ -23,7 +23,7 @@ public class CityController {
 
     // GET city by ID
     @GetMapping("/{id}")
-    public ResponseEntity<City> getCityById(@PathVariable Long id) {
+    public ResponseEntity<City> getCityById(@PathVariable Integer id) {
         return cityRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -37,7 +37,7 @@ public class CityController {
 
     // PUT update city
     @PutMapping("/{id}")
-    public ResponseEntity<City> updateCity(@PathVariable Long id, @RequestBody City updated) {
+    public ResponseEntity<City> updateCity(@PathVariable Integer id, @RequestBody City updated) {
         return cityRepository.findById(id).map(city -> {
             city.setName(updated.getName());
             city.setIsInternational(updated.getIsInternational());
@@ -47,7 +47,7 @@ public class CityController {
 
     // DELETE city
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCity(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCity(@PathVariable Integer id) {
         if (cityRepository.existsById(id)) {
             cityRepository.deleteById(id);
             return ResponseEntity.ok().build();

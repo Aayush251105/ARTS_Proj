@@ -2,6 +2,8 @@ package com.team26.backend.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import com.team26.backend.dto.BookingRequest;
+import com.team26.backend.dto.BookingResponse;
+import com.team26.backend.dto.PassengerDTO;
 import com.team26.backend.model.Booking;
 import com.team26.backend.model.Flight;
 import com.team26.backend.model.Passenger;
@@ -21,6 +26,7 @@ import com.team26.backend.repository.BookingRepository;
 import com.team26.backend.repository.FlightRepository;
 import com.team26.backend.repository.PassengerRepository;
 import com.team26.backend.repository.CancellationRepository;
+import com.team26.backend.util.EncryptionUtil;
 
 @RestController
 @RequestMapping("/api/bookings")
@@ -31,10 +37,10 @@ public class BookingController {
     private BookingRepository bookingRepository;
 
     @Autowired
-    private FlightRepository flightRepository;
+    private PassengerRepository passengerRepository;
 
     @Autowired
-    private PassengerRepository passengerRepository;
+    private FlightRepository flightRepository;
 
     @Autowired
     private CancellationRepository cancellationRepository;
@@ -42,7 +48,106 @@ public class BookingController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    // GET bookings by user
+    private Map<String, Object> errorResponse(String message) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", message);
+        response.put("status", "FAILED");
+        return response;
+    }
+
+    // ✅ CREATE BOOKING WITH PASSENGERS
+    @PostMapping
+    public ResponseEntity<?> createBooking(@RequestBody BookingRequest bookingRequest) {
+        try {
+            System.out.println("📝 Received booking request: " + bookingRequest.getFromLocation() + " -> " + bookingRequest.getToLocation());
+
+            // Validate required fields
+            if (bookingRequest.getFlight1() == null) {
+                return ResponseEntity.badRequest().body(errorResponse("Flight1 is required"));
+            }
+            if (bookingRequest.getPassengers() == null || bookingRequest.getPassengers().isEmpty()) {
+                return ResponseEntity.badRequest().body(errorResponse("At least one passenger is required"));
+            }
+
+            boolean isInternational = Boolean.TRUE.equals(bookingRequest.getIsInternational());
+            System.out.println("✈️  International flight: " + isInternational);
+
+            // ✅ Server-side passport validation for international flights
+            if (isInternational) {
+                for (int i = 0; i < bookingRequest.getPassengers().size(); i++) {
+                    PassengerDTO p = bookingRequest.getPassengers().get(i);
+                    if (p.getPassport() == null || p.getPassport().trim().isEmpty()) {
+                        return ResponseEntity.badRequest().body(
+                            errorResponse("Passenger " + (i + 1) + ": Passport is required for international flights")
+                        );
+                    }
+                    if (p.getPassport().trim().length() < 6 || p.getPassport().trim().length() > 20) {
+                        return ResponseEntity.badRequest().body(
+                            errorResponse("Passenger " + (i + 1) + ": Passport must be 6-20 characters")
+                        );
+                    }
+                }
+            }
+
+            // Create Booking
+            Booking booking = new Booking();
+            booking.setUserId(bookingRequest.getUserId());
+            booking.setFlight1(bookingRequest.getFlight1());
+            booking.setFlight2(bookingRequest.getFlight2());
+            booking.setSeatClass(bookingRequest.getSeatClass());
+            booking.setBookingPrice(BigDecimal.valueOf(bookingRequest.getBookingPrice()));
+            booking.setFromLocation(bookingRequest.getFromLocation());
+            booking.setToLocation(bookingRequest.getToLocation());
+            booking.setNumSeatsBook(bookingRequest.getNumSeatsBook());
+            booking.setDateOfFlight(LocalDate.parse(bookingRequest.getDateOfFlight()));
+            booking.setStatus("CONFIRMED");
+
+            Booking savedBooking = bookingRepository.save(booking);
+            System.out.println("✅ Booking saved with ID: " + savedBooking.getBookId());
+
+            // Save Passengers — encrypt passport ONLY for international flights
+            for (PassengerDTO passengerDTO : bookingRequest.getPassengers()) {
+                Passenger passenger = new Passenger();
+                passenger.setBookingId(savedBooking.getBookId());
+                passenger.setPassName(passengerDTO.getName());
+
+                // Use string seats directly matching new schema
+                if (passengerDTO.getSeatFlight1() != null && !passengerDTO.getSeatFlight1().isEmpty()) {
+                    passenger.setSeat1(passengerDTO.getSeatFlight1());
+                }
+                if (passengerDTO.getSeatFlight2() != null && !passengerDTO.getSeatFlight2().isEmpty()) {
+                    passenger.setSeat2(passengerDTO.getSeatFlight2());
+                }
+
+                // 🔐 Encrypt passport ONLY for international flights — domestic leaves it null
+                if (isInternational && passengerDTO.getPassport() != null && !passengerDTO.getPassport().isEmpty()) {
+                    String encryptedPassport = EncryptionUtil.encrypt(passengerDTO.getPassport().trim());
+                    passenger.setPassport(encryptedPassport);
+                    System.out.println("🔐 Passport encrypted for passenger: " + passengerDTO.getName());
+                } else {
+                    passenger.setPassport(null); // Domestic: never store passport
+                }
+
+                passengerRepository.save(passenger);
+                System.out.println("✅ Passenger saved: " + passengerDTO.getName());
+            }
+
+            return ResponseEntity.ok(new BookingResponse(
+                savedBooking.getBookId(),
+                "Booking created successfully!",
+                bookingRequest.getPassengers().size()
+            ));
+
+        } catch (IllegalArgumentException e) {
+            System.err.println("❌ Invalid argument: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(errorResponse("Invalid date format or data: " + e.getMessage()));
+        } catch (Exception e) {
+            System.err.println("❌ Booking error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(errorResponse("Error creating booking: " + e.getMessage()));
+        }
+    }
     @GetMapping("/user/{userId}")
     public List<Booking> getBookingsByUserId(@PathVariable Integer userId) {
         // CHANGED: Now calls the method that checks for cancellation status

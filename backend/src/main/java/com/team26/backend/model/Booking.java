@@ -50,6 +50,8 @@ public class Booking {
     @Column(name = "NumSeatsBook")
     private Integer numSeatsBook;
 
+
+
     @Column(name = "Status")
     private String status;
 

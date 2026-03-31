@@ -13,6 +13,18 @@ import com.team26.backend.model.Passenger;
 @Repository
 public interface PassengerRepository extends JpaRepository<Passenger, Integer> {
 
+    @Query("""
+        SELECT p.seat1, p.seat2, b.flight1, b.flight2
+        FROM Passenger p, Booking b
+        WHERE p.bookingId = b.bookId
+        AND (b.flight1 = :flightId OR b.flight2 = :flightId)
+        AND b.dateOfFlight = :date
+    """)
+    List<Object[]> findSeatsByFlightAndDate(
+        @Param("flightId") Integer flightId,
+        @Param("date") java.time.LocalDate date
+    );
+
     @Query("SELECT p, b FROM Passenger p JOIN Booking b ON p.bookingId = b.bookId " +
            "WHERE (b.flight1 = :flightId OR b.flight2 = :flightId) " +
            "AND b.dateOfFlight >= :startDate AND b.dateOfFlight <= :endDate " +

@@ -1,8 +1,7 @@
 -- 1. Reset everything and restart ID sequences at 1
 TRUNCATE TABLE Cancellations, Passengers, Booking, Flights, Crew, City, Users RESTART IDENTITY CASCADE;
 
--- 2. USERS
--- IDs: 1: admin_neil, 2: travel_pro, 3: guy_who..., 4: rat_bastard, 5: scooter_jesus, etc.
+-- 2. USERS (16 total)
 INSERT INTO Users (Username, Password, Email, Role) VALUES
 ('admin_neil', 'pass123', 'neil@snu.edu.in', 'ADMIN'),
 ('travel_pro', 'fly789', 'passenger@example.com', 'PASSENGER'),
@@ -12,59 +11,189 @@ INSERT INTO Users (Username, Password, Email, Role) VALUES
 ('john_doe', 'password', 'john.doe@example.com', 'PASSENGER'),
 ('jane_doe', 'password', 'jane.doe@example.com', 'PASSENGER'),
 ('alice', 'password', 'alice@example.com', 'PASSENGER'),
-('bob', 'password', 'bob@example.com', 'PASSENGER');
+('bob', 'password', 'bob@example.com', 'PASSENGER'),
+('charlie', 'password', 'charlie@example.com', 'PASSENGER'),
+('diana', 'password', 'diana@example.com', 'PASSENGER'),
+('eve', 'password', 'eve@example.com', 'PASSENGER'),
+('frank', 'password', 'frank@example.com', 'PASSENGER'),
+('grace', 'password', 'grace@example.com', 'PASSENGER'),
+('henry', 'password', 'henry@example.com', 'PASSENGER'),
+('123', '12345678', '123@gmail.com', 'ADMIN');
 
--- 3. CITIES
+-- 3. CITIES (29 total: 12 domestic + 17 international - Realistic cities only)
 INSERT INTO City (Name, IsInternational) VALUES
+-- Domestic India (IDs 1-12)
 ('Delhi', FALSE), ('Mumbai', FALSE), ('Bangalore', FALSE), ('Goa', FALSE),
-('London', TRUE), ('New York', TRUE), ('Singapore', TRUE), ('Tokyo', TRUE), 
-('Paris', TRUE), ('Sydney', TRUE), ('Mother Russia', TRUE), ('Hong Kong', TRUE), 
-('Epstein Island', TRUE), ('Frankfurt', TRUE), ('Diddy Party', TRUE), ('Los Angeles', TRUE);
+('Chennai', FALSE), ('Hyderabad', FALSE), ('Kolkata', FALSE), ('Jaipur', FALSE),
+('Pune', FALSE), ('Kochi', FALSE), ('Ahmedabad', FALSE), ('Varanasi', FALSE),
+-- International (IDs 13-29)
+('London', TRUE), ('New York', TRUE), ('Singapore', TRUE), ('Tokyo', TRUE),
+('Paris', TRUE), ('Sydney', TRUE), ('Moscow', TRUE), ('Hong Kong', TRUE),
+('Madrid', TRUE), ('Frankfurt', TRUE), ('Rome', TRUE), ('Los Angeles', TRUE),
+('Dubai', TRUE), ('Bangkok', TRUE), ('Toronto', TRUE), ('Amsterdam', TRUE), ('Seoul', TRUE);
 
--- 4. CREW
-INSERT INTO Crew (CrewCapacity) VALUES (10), (15), (20), (25), (12), (18);
+-- 4. CREW (40 members - Added 10 more to handle extra flights)
+INSERT INTO Crew (CrewCapacity) VALUES
+(10), (15), (20), (25), (12), (18), (8),  (14), (22), (16), 
+(11), (19), (24), (13), (17), (21), (9),  (23), (16), (12), 
+(20), (15), (18), (10), (14), (22), (11), (19), (25), (8),
+(12), (14), (16), (20), (22), (18), (25), (10), (15), (12);
 
--- 5. FLIGHTS (IDs 1-8)
+-- 5. FLIGHTS (110 total now - Original 60 + 50 New)
 INSERT INTO Flights (FromLocation, ToLocation, NumSeats, PFirst, PBusiness, PEcon, TakeoffT, LandingT, CrewID) VALUES
-('Delhi', 'Mumbai', 180, 5000.00, 3000.00, 1500.00, '10:00:00', '12:30:00', 1),
-('Mumbai', 'London', 250, 50000.00, 30000.00, 12000.00, '14:00:00', '02:00:00', 2),
-('Delhi', 'Bangalore', 200, 6000.00, 3500.00, 1800.00, '08:00:00', '10:15:00', 3),
-('Mumbai', 'Singapore', 300, 55000.00, 32000.00, 14000.00, '15:30:00', '05:00:00', 4),
-('London', 'New York', 280, 45000.00, 28000.00, 10000.00, '18:00:00', '08:00:00', 5),
-('Mumbai', 'Bangalore', 180, 4000.00, 2500.00, 1200.00, '10:00:00', '12:30:00', 6),
-('Delhi', 'Goa', 150, 7000.00, 4000.00, 2200.00, '14:00:00', '16:45:00', 1),
-('Bangalore', 'Delhi', 200, 6500.00, 3800.00, 1900.00, '09:00:00', '11:45:00', 2);
+-- ORIGINAL 60 FLIGHTS
+('Delhi',     'Mumbai',    180, 5000.00,  3000.00,  1500.00,  '10:00:00', '12:30:00', 1),  
+('Mumbai',    'London',    250, 60000.00, 35000.00, 14000.00, '15:00:00', '02:00:00', 2),  
+('Delhi',     'Bangalore', 200, 6000.00,  3500.00,  1800.00,  '08:00:00', '10:15:00', 3),  
+('Mumbai',    'Singapore', 300, 55000.00, 32000.00, 14000.00, '15:30:00', '05:00:00', 4),  
+('London',    'New York',  280, 55000.00, 32000.00, 12000.00, '18:00:00', '08:00:00', 5),  
+('Mumbai',    'Bangalore', 180, 4000.00,  2500.00,  1200.00,  '06:00:00', '08:00:00', 6),  
+('Delhi',     'Goa',       150, 7000.00,  4000.00,  2200.00,  '14:00:00', '16:45:00', 1),  
+('Bangalore', 'Delhi',     200, 6500.00,  3800.00,  1900.00,  '09:00:00', '11:45:00', 2),  
+('Delhi',     'Chennai',   180, 6000.00,  3500.00,  1800.00,  '07:30:00', '10:00:00', 7),  
+('Chennai',   'Delhi',     180, 6000.00,  3500.00,  1800.00,  '11:00:00', '13:30:00', 8),  
+('Delhi',     'Hyderabad', 200, 5500.00,  3200.00,  1600.00,  '08:00:00', '10:15:00', 9),  
+('Hyderabad', 'Delhi',     200, 5500.00,  3200.00,  1600.00,  '12:00:00', '14:15:00', 10), 
+('Delhi',     'Kolkata',   200, 5800.00,  3400.00,  1700.00,  '09:00:00', '11:30:00', 11), 
+('Kolkata',   'Delhi',     200, 5800.00,  3400.00,  1700.00,  '13:00:00', '15:30:00', 12), 
+('Delhi',     'Jaipur',    150, 3500.00,  2000.00,  1000.00,  '07:00:00', '08:00:00', 13), 
+('Jaipur',    'Delhi',     150, 3500.00,  2000.00,  1000.00,  '10:00:00', '11:00:00', 14), 
+('Delhi',     'Ahmedabad', 160, 4500.00,  2800.00,  1400.00,  '08:30:00', '10:00:00', 15), 
+('Ahmedabad', 'Delhi',     160, 4500.00,  2800.00,  1400.00,  '11:30:00', '13:00:00', 16), 
+('Delhi',     'Pune',      170, 5000.00,  2900.00,  1450.00,  '09:00:00', '11:00:00', 17), 
+('Pune',      'Delhi',     170, 5000.00,  2900.00,  1450.00,  '12:30:00', '14:30:00', 18), 
+('Mumbai',    'Goa',       150, 4000.00,  2300.00,  1100.00,  '09:00:00', '10:15:00', 19), 
+('Goa',       'Mumbai',    150, 4000.00,  2300.00,  1100.00,  '12:00:00', '13:15:00', 20), 
+('Mumbai',    'Kochi',     160, 5000.00,  3000.00,  1500.00,  '10:30:00', '12:00:00', 21), 
+('Kochi',     'Mumbai',    160, 5000.00,  3000.00,  1500.00,  '14:00:00', '15:30:00', 22), 
+('Mumbai',    'Hyderabad', 170, 4500.00,  2600.00,  1300.00,  '07:00:00', '08:30:00', 23), 
+('Hyderabad', 'Mumbai',    170, 4500.00,  2600.00,  1300.00,  '10:00:00', '11:30:00', 24), 
+('Mumbai',    'Chennai',   180, 4500.00,  2700.00,  1350.00,  '09:00:00', '11:00:00', 25), 
+('Chennai',   'Mumbai',    180, 4500.00,  2700.00,  1350.00,  '13:00:00', '15:00:00', 26), 
+('Mumbai',    'Kolkata',   200, 5500.00,  3200.00,  1600.00,  '07:30:00', '10:00:00', 27), 
+('Kolkata',   'Mumbai',    200, 5500.00,  3200.00,  1600.00,  '11:30:00', '14:00:00', 28), 
+('Bangalore', 'Chennai',   150, 3500.00,  2000.00,  1000.00,  '08:00:00', '09:00:00', 29), 
+('Chennai',   'Bangalore', 150, 3500.00,  2000.00,  1000.00,  '10:00:00', '11:00:00', 30), 
+('Delhi',     'Dubai',     220, 30000.00, 18000.00, 8000.00,  '07:00:00', '09:30:00', 7),  
+('Dubai',     'Delhi',     220, 30000.00, 18000.00, 8000.00,  '14:00:00', '18:30:00', 8),  
+('Dubai',     'London',    280, 50000.00, 30000.00, 13000.00, '12:00:00', '17:00:00', 9),  
+('Mumbai',    'Dubai',     220, 25000.00, 15000.00, 7000.00,  '08:00:00', '10:00:00', 10), 
+('Dubai',     'Mumbai',    220, 25000.00, 15000.00, 7000.00,  '15:00:00', '19:00:00', 11), 
+('Delhi',     'London',    300, 80000.00, 50000.00, 22000.00, '21:00:00', '05:00:00', 12), 
+('London',    'Delhi',     300, 80000.00, 50000.00, 22000.00, '09:00:00', '22:30:00', 13), 
+('Delhi',     'Singapore', 260, 50000.00, 30000.00, 12000.00, '10:00:00', '17:30:00', 14), 
+('Singapore', 'Delhi',     260, 50000.00, 30000.00, 12000.00, '20:00:00', '01:00:00', 15), 
+('Bangalore', 'Singapore', 250, 45000.00, 28000.00, 11000.00, '09:00:00', '16:30:00', 16), 
+('Singapore', 'Bangalore', 250, 45000.00, 28000.00, 11000.00, '18:00:00', '22:00:00', 17), 
+('Delhi',     'Bangkok',   230, 35000.00, 22000.00, 9500.00,  '10:00:00', '16:00:00', 18), 
+('Bangkok',   'Delhi',     230, 35000.00, 22000.00, 9500.00,  '19:00:00', '22:30:00', 19), 
+('Mumbai',    'Bangkok',   230, 32000.00, 20000.00, 9000.00,  '12:00:00', '18:30:00', 20), 
+('Bangkok',   'Mumbai',    230, 32000.00, 20000.00, 9000.00,  '21:00:00', '00:00:00', 21), 
+('Singapore', 'Tokyo',     260, 45000.00, 28000.00, 12000.00, '08:00:00', '16:00:00', 22), 
+('Tokyo',     'Singapore', 260, 45000.00, 28000.00, 12000.00, '18:00:00', '23:00:00', 23), 
+('Singapore', 'Hong Kong', 240, 22000.00, 14000.00, 6500.00,  '10:00:00', '14:00:00', 24), 
+('Hong Kong', 'Singapore', 240, 22000.00, 14000.00, 6500.00,  '16:00:00', '20:00:00', 25), 
+('Hong Kong', 'Tokyo',     260, 18000.00, 12000.00, 5500.00,  '09:00:00', '13:00:00', 26), 
+('Tokyo',     'Hong Kong', 260, 18000.00, 12000.00, 5500.00,  '15:00:00', '19:00:00', 27), 
+('Bangkok',   'Singapore', 220, 20000.00, 13000.00, 6000.00,  '07:00:00', '11:00:00', 28), 
+('Singapore', 'Bangkok',   220, 20000.00, 13000.00, 6000.00,  '14:00:00', '18:00:00', 29), 
+('Mumbai',    'Frankfurt', 270, 65000.00, 40000.00, 16000.00, '05:00:00', '11:00:00', 30), 
+('Frankfurt', 'Mumbai',    270, 65000.00, 40000.00, 16000.00, '15:00:00', '03:00:00', 7),  
+('Frankfurt', 'London',    200, 15000.00, 10000.00, 5000.00,  '13:00:00', '14:30:00', 8),  
+('London',    'Frankfurt', 200, 15000.00, 10000.00, 5000.00,  '09:00:00', '12:00:00', 9),  
+('New York',  'London',    300, 60000.00, 38000.00, 15000.00, '22:00:00', '10:00:00', 10),
 
--- 6. BOOKINGS
--- Mapping UserIDs and FlightIDs precisely based on the order above
+-- 50 NEW FLIGHTS
+('Delhi',     'Paris',     280, 75000.00, 45000.00, 18000.00, '18:00:00', '01:00:00', 5),
+('Paris',     'Delhi',     280, 75000.00, 45000.00, 18000.00, '08:00:00', '21:00:00', 6),
+('Mumbai',    'Paris',     280, 72000.00, 42000.00, 17000.00, '20:00:00', '03:30:00', 7),
+('Paris',     'Mumbai',    280, 72000.00, 42000.00, 17000.00, '10:00:00', '23:30:00', 8),
+
+('Delhi',     'Rome',      250, 68000.00, 40000.00, 16000.00, '22:30:00', '04:00:00', 12),
+('Rome',      'Delhi',     250, 68000.00, 40000.00, 16000.00, '09:00:00', '21:30:00', 13),
+('Mumbai',    'Rome',      250, 66000.00, 39000.00, 15500.00, '23:30:00', '05:00:00', 14),
+('Rome',      'Mumbai',    250, 66000.00, 39000.00, 15500.00, '11:00:00', '22:30:00', 15),
+
+('Delhi',     'Moscow',    260, 55000.00, 32000.00, 14000.00, '01:00:00', '08:00:00', 18),
+('Moscow',    'Delhi',     260, 55000.00, 32000.00, 14000.00, '14:00:00', '21:00:00', 19),
+
+('Delhi',     'Madrid',    240, 68000.00, 41000.00, 16500.00, '02:00:00', '09:30:00', 21),
+('Madrid',    'Delhi',     240, 68000.00, 41000.00, 16500.00, '15:00:00', '23:30:00', 22),
+
+('London',    'Paris',     200, 18000.00, 12000.00, 6000.00,  '08:00:00', '10:00:00', 25),
+('Paris',     'London',    200, 18000.00, 12000.00, 6000.00,  '12:00:00', '14:00:00', 26),
+('London',    'Amsterdam', 200, 16000.00, 11000.00, 5500.00,  '07:30:00', '09:30:00', 27),
+('Amsterdam', 'London',    200, 16000.00, 11000.00, 5500.00,  '11:30:00', '13:30:00', 28),
+('Paris',     'Frankfurt', 200, 15000.00, 10000.00, 5000.00,  '09:00:00', '11:00:00', 29),
+('Frankfurt', 'Paris',     200, 15000.00, 10000.00, 5000.00,  '14:00:00', '16:00:00', 30),
+('Rome',      'Frankfurt', 200, 16000.00, 11000.00, 5500.00,  '10:30:00', '12:30:00', 31),
+('Frankfurt', 'Rome',      200, 16000.00, 11000.00, 5500.00,  '15:30:00', '17:30:00', 32),
+
+('New York',  'Paris',     300, 62000.00, 39000.00, 16000.00, '20:00:00', '08:00:00', 35),
+('Paris',     'New York',  300, 62000.00, 39000.00, 16000.00, '14:00:00', '16:00:00', 36),
+('New York',  'Toronto',   180, 20000.00, 14000.00, 7000.00,  '08:00:00', '09:30:00', 37),
+('Toronto',   'New York',  180, 20000.00, 14000.00, 7000.00,  '12:00:00', '13:30:00', 38),
+('Los Angeles','New York', 250, 30000.00, 18000.00, 9000.00,  '06:00:00', '14:00:00', 39),
+('New York','Los Angeles', 250, 30000.00, 18000.00, 9000.00,  '17:00:00', '20:00:00', 40),
+
+('Singapore', 'Sydney',    280, 55000.00, 32000.00, 14000.00, '21:00:00', '07:00:00', 4),
+('Sydney',    'Singapore', 280, 55000.00, 32000.00, 14000.00, '10:00:00', '16:00:00', 5),
+('Tokyo',     'Sydney',    300, 65000.00, 38000.00, 17000.00, '20:00:00', '06:00:00', 6),
+('Sydney',    'Tokyo',     300, 65000.00, 38000.00, 17000.00, '09:00:00', '17:00:00', 7),
+
+('Tokyo',     'Seoul',     220, 22000.00, 14000.00, 6500.00,  '08:00:00', '10:30:00', 10),
+('Seoul',     'Tokyo',     220, 22000.00, 14000.00, 6500.00,  '13:00:00', '15:30:00', 11),
+('Hong Kong', 'Seoul',     220, 24000.00, 15000.00, 7000.00,  '09:00:00', '13:00:00', 12),
+('Seoul',     'Hong Kong', 220, 24000.00, 15000.00, 7000.00,  '15:00:00', '19:00:00', 13),
+
+('Dubai',     'New York',  320, 85000.00, 55000.00, 24000.00, '08:00:00', '14:00:00', 17),
+('New York',  'Dubai',     320, 85000.00, 55000.00, 24000.00, '21:00:00', '18:00:00', 18),
+('Dubai',     'Paris',     280, 52000.00, 31000.00, 14000.00, '07:00:00', '12:00:00', 19),
+('Paris',     'Dubai',     280, 52000.00, 31000.00, 14000.00, '15:00:00', '00:00:00', 20),
+
+('Bangalore', 'Dubai',     240, 28000.00, 16000.00, 7500.00,  '06:00:00', '08:30:00', 22),
+('Dubai',     'Bangalore', 240, 28000.00, 16000.00, 7500.00,  '11:00:00', '16:30:00', 23),
+('Bangalore', 'London',    280, 78000.00, 48000.00, 21000.00, '04:00:00', '10:00:00', 24),
+('London',    'Bangalore', 280, 78000.00, 48000.00, 21000.00, '14:00:00', '05:00:00', 25),
+
+('Chennai',   'Dubai',     230, 26000.00, 15000.00, 7000.00,  '05:00:00', '07:30:00', 26),
+('Dubai',     'Chennai',   230, 26000.00, 15000.00, 7000.00,  '10:30:00', '16:00:00', 27),
+('Chennai',   'Singapore', 240, 28000.00, 17000.00, 8000.00,  '23:00:00', '06:00:00', 28),
+('Singapore', 'Chennai',   240, 28000.00, 17000.00, 8000.00,  '08:00:00', '10:00:00', 29),
+
+('Hyderabad', 'Dubai',     220, 27000.00, 15500.00, 7200.00,  '07:30:00', '10:00:00', 30),
+('Dubai',     'Hyderabad', 220, 27000.00, 15500.00, 7200.00,  '13:00:00', '18:30:00', 31),
+('Kolkata',   'Dubai',     220, 29000.00, 16500.00, 7800.00,  '08:00:00', '11:00:00', 32),
+('Dubai',     'Kolkata',   220, 29000.00, 16500.00, 7800.00,  '14:00:00', '20:00:00', 33);
+
+-- 6. BOOKINGS (same 10 as before, all referencing flights 1-8 which still exist)
 INSERT INTO Booking (UserID, Flight1, SeatClass, BookingPrice, FromLocation, ToLocation, NumSeatsBook, DateOfFlight, Status) VALUES
-(2, 1, 'Economy', 1500.00, 'Delhi', 'Mumbai', 1, '2026-04-01', 'CANCELLED'), -- ID 1
-(2, 3, 'Business', 3500.00, 'Delhi', 'Bangalore', 1, '2026-04-05', 'CONFIRMED'), -- ID 2
-(2, 6, 'Economy', 1200.00, 'Mumbai', 'Bangalore', 1, '2026-04-10', 'CONFIRMED'), -- ID 3
-(2, 7, 'First', 7000.00, 'Delhi', 'Goa', 1, '2026-04-15', 'CONFIRMED'), -- ID 4
-(4, 2, 'Economy', 12000.00, 'Mumbai', 'London', 1, '2026-04-02', 'CANCELLED'), -- ID 5
-(5, 5, 'Business', 28000.00, 'London', 'New York', 1, '2026-04-07', 'CANCELLED'), -- ID 6
-(5, 8, 'Economy', 1900.00, 'Bangalore', 'Delhi', 1, '2026-04-20', 'CONFIRMED'), -- ID 7
-(3, 4, 'First', 55000.00, 'Mumbai', 'Singapore', 1, '2026-04-06', 'CONFIRMED'), -- ID 8
-(3, 5, 'Business', 28000.00, 'London', 'New York', 1, '2026-04-07', 'CONFIRMED'), -- ID 9
-(3, 6, 'Economy', 1200.00, 'Mumbai', 'Bangalore', 1, '2026-04-10', 'CONFIRMED'); -- ID 10
+(2, 1,  'Economy',  1500.00,  'Delhi',    'Mumbai',    1, '2026-04-01', 'CANCELLED'),  
+(2, 3,  'Business', 3500.00,  'Delhi',    'Bangalore', 1, '2026-04-05', 'CONFIRMED'),  
+(2, 6,  'Economy',  1200.00,  'Mumbai',   'Bangalore', 1, '2026-04-10', 'CONFIRMED'),  
+(2, 7,  'First',    7000.00,  'Delhi',    'Goa',       1, '2026-04-15', 'CONFIRMED'),  
+(4, 2,  'Economy',  14000.00, 'Mumbai',   'London',    1, '2026-04-02', 'CANCELLED'),  
+(5, 5,  'Business', 32000.00, 'London',   'New York',  1, '2026-04-07', 'CANCELLED'),  
+(5, 8,  'Economy',  1900.00,  'Bangalore','Delhi',     1, '2026-04-20', 'CONFIRMED'),  
+(3, 4,  'First',    55000.00, 'Mumbai',   'Singapore', 1, '2026-04-06', 'CONFIRMED'),  
+(3, 5,  'Business', 32000.00, 'London',   'New York',  1, '2026-04-07', 'CONFIRMED'),  
+(3, 6,  'Economy',  1200.00,  'Mumbai',   'Bangalore', 1, '2026-04-10', 'CONFIRMED');  
 
 -- 7. PASSENGERS
--- Linked to BookingIDs 1 through 10
 INSERT INTO Passengers (BookingID, PassName, Seat1, Passport) VALUES
-(1, 'Randy Orton', '12F', 'RKO999'),
-(2, 'Neil', '2A', 'SNU2026'),
-(3, 'Neil', '14C', 'SNU2026'),
-(4, 'Neil', '1A', 'SNU2026'),
-(5, 'Vikram', '22B', 'RAT777'),
-(6, 'Scooter Jesus', '3D', 'HEAVEN1'),
-(7, 'John Doe', '15E', 'JD123456'),
-(8, 'Jane Doe', '15F', 'JD654321'),
-(9, 'Alice', '10A', 'ALICE123'),
-(10, 'Bob', '10B', 'BOB456789');
+(1,  'Randy Orton',   '12', NULL),
+(2,  'Neil',          '2',  NULL),
+(3,  'Neil',          '14', NULL),
+(4,  'Neil',          '1',  NULL),
+(5,  'Vikram',        '22', 'RAT777'),
+(6,  'Scooter Jesus', '3',  'HEAVEN1'),
+(7,  'John Doe',      '15', NULL),
+(8,  'Jane Doe',      '16', 'JD654321'),
+(9,  'Alice',         '10', 'ALICE123'),
+(10, 'Bob',           '11', 'BOB456789');
 
 -- 8. CANCELLATIONS
 INSERT INTO Cancellations (BookID, RefundAmt) VALUES
 (1, 1200.00),
-(5, 10000.00),
-(6, 25000.00);
+(5, 11200.00),
+(6, 25600.00);

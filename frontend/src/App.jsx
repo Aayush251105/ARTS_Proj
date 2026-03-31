@@ -1,10 +1,15 @@
-import './App.css'
+import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Home from './pages/Home';
-import Profile from './pages/Profile';
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import FlightList from "./pages/FlightList";
 import MainLayout from "./layouts/MainLayout";
+import SeatSelection from "./pages/SeatSelection";
+import Payment from "./pages/Payment";
+import Confirmation from "./pages/Confirmation";
+
 import AdminRoute from "./components/AdminRoute";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminResources from "./pages/admin/AdminResources";
@@ -40,6 +45,43 @@ function App() {
         {/* Auth pages (no Navbar) */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+
+        {/* Flight List */}
+        <Route
+          path="/flights"
+          element={
+            <MainLayout>
+              <FlightList />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/seat-selection"
+          element={
+            <MainLayout>
+              <SeatSelection />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/payment"
+          element={
+            <MainLayout>
+              <Payment />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/confirmation"
+          element={
+            <MainLayout>
+              <Confirmation />
+            </MainLayout>
+          }
+        />
 
         {/* =============================================
             ADMIN ROUTES — All protected by AdminRoute

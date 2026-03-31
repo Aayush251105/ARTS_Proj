@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import '../styles/navbar.css';
+import "../styles/navbar.css";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!localStorage.getItem("userId")
   );
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("userId"));
+  }, []);
 
   const role = localStorage.getItem("role");
   const navigate = useNavigate();
@@ -16,48 +20,36 @@ function Navbar() {
     localStorage.removeItem("role");
     localStorage.removeItem("username");
     localStorage.removeItem("token");
-
     setIsLoggedIn(false);
-    navigate("/");
+    navigate("/login");
   };
 
   return (
     <nav className="navbar">
-      <Link to="/" className="logo-link">
-        <div className="logo">ARTS</div>
+      <Link to="/" className="navbar-logo">
+         <span className="navbar-logo-icon">✈</span>
+         <span className="navbar-logo-text">Airline System</span>
       </Link>
 
-      <div className="nav-links">
-        <Link to="/" className="nav-link">
-          Home
-        </Link>
-
-        {isLoggedIn && (
-          <Link to="/profile" className="nav-link">
-            Profile
-          </Link>
-        )}
-
-        {isLoggedIn && role === "ADMIN" && (
-          <Link to="/admin" className="nav-link dashboard-link">
-            <i className="fa-solid fa-gauge-high"></i>
-            Dashboard
-          </Link>
-        )}
-
-        {isLoggedIn ? (
+      <div className="navbar-right">
+        {!isLoggedIn ? (
           <>
-            <button className="nav-profile-btn" onClick={() => navigate('/profile')}>
-              {username}'s Profile
-            </button>
-            <button className="nav-logout-btn" onClick={handleLogout}>
-              Logout
-            </button>
+            <Link to="/login" className="navbar-btn-ghost">Login</Link>
+            <Link to="/login" className="navbar-btn-solid">Sign Up</Link>
           </>
         ) : (
           <>
-            <button className="login-btn" onClick={() => navigate('/login')}>Login</button>
-            <button className="signup-btn" onClick={() => navigate('/signup')}>Sign Up</button>
+            {role === "ADMIN" && (
+              <Link to="/admin" className="navbar-btn-ghost" style={{marginRight: '4px'}}>
+                Dashboard
+              </Link>
+            )}
+            <Link to="/profile" className="navbar-btn-ghost">
+              👤 {username || "Profile"}
+            </Link>
+            <button className="navbar-btn-logout" onClick={handleLogout}>
+              Logout
+            </button>
           </>
         )}
       </div>
