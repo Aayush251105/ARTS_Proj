@@ -10,6 +10,15 @@
 
   padding: 0 40px;
   box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo-link {
+  text-decoration: none;
+  color: white;
+  background: transparent;
 }
 
 .logo {
@@ -20,9 +29,42 @@
 
 .nav-links {
   display: flex;
-  gap: 15px;
+  gap: 12px;
+  align-items: center;
   background-color: transparent;
-  /* border: 2px solid white; */
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.nav-link:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.nav-link.dashboard-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-weight: 600;
+}
+
+.nav-link.dashboard-link:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.nav-link.dashboard-link i {
+  font-size: 13px;
 }
 
 .login-btn,
@@ -31,13 +73,19 @@
   border: none;
   cursor: pointer;
   border-radius: 5px;
-  
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .login-btn {
-  /* background-color: transparent; */
   color: white;
   border: 1px solid white;
+  background: transparent;
+}
+
+.login-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .signup-btn {
@@ -45,4 +93,8 @@
   color: black;
   border: 1px solid black;
   border-radius: 2px;
+}
+
+.signup-btn:hover {
+  background-color: white;
 }

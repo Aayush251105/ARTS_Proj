@@ -1,34 +1,343 @@
 package com.team26.backend.controller;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.*;
 
 import com.team26.backend.model.Booking;
+import com.team26.backend.model.Flight;
+import com.team26.backend.model.Passenger;
+import com.team26.backend.model.Cancellation;
 import com.team26.backend.repository.BookingRepository;
+import com.team26.backend.repository.FlightRepository;
+import com.team26.backend.repository.PassengerRepository;
+import com.team26.backend.repository.CancellationRepository;
 
 @RestController
 @RequestMapping("/api/bookings")
-@CrossOrigin(origins = "http://localhost:5173") // Crucial: Allows React to talk to Java
+@CrossOrigin(origins = "http://localhost:5173")
 public class BookingController {
 
     @Autowired
     private BookingRepository bookingRepository;
 
-    // This defines the URL: http://localhost:8080/api/bookings/user/{id}
+    @Autowired
+    private FlightRepository flightRepository;
+
+    @Autowired
+    private PassengerRepository passengerRepository;
+
+    @Autowired
+    private CancellationRepository cancellationRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    // GET bookings by user
     @GetMapping("/user/{userId}")
     public List<Booking> getBookingsByUserId(@PathVariable Long userId) {
         return bookingRepository.findByUserId(userId);
     }
 
+    // CANCEL a booking
     @DeleteMapping("/{bookId}")
-    public void deleteBooking(@PathVariable Long bookId) {
-        bookingRepository.deleteById(bookId);
+    public ResponseEntity<?> deleteBooking(@PathVariable Long bookId) {
+        Booking booking = bookingRepository.findById(bookId).orElse(null);
+        if (booking != null && !"CANCELLED".equals(booking.getStatus())) {
+            booking.setStatus("CANCELLED");
+            bookingRepository.save(booking);
+            
+            // Insert into Cancellations table (e.g. 80% refund logic or simple calculation)
+            BigDecimal refundAmt = booking.getBookingPrice() != null 
+                ? booking.getBookingPrice().multiply(new BigDecimal("0.80")) 
+                : BigDecimal.ZERO;
+                
+            jdbcTemplate.update("INSERT INTO Cancellations (BookID, RefundAmt) VALUES (?, ?)", 
+                bookId, refundAmt);
+                
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // Count bookings where dateOfFlight == today
+    @GetMapping("/count/today")
+    public long countBookingsToday() {
+        return bookingRepository.countByDateOfFlightAndStatus(LocalDate.now(), "CONFIRMED");
+    }
+
+    /**
+     * GET /api/bookings/occupancy?flightId=1&startDate=2026-04-01&endDate=2026-04-10
+     *
+     * Returns occupancy statistics for the given flight across the date range.
+     * Seat class distribution: First=20%, Business=20%, Economy=60% of total capacity.
+     * Multi-day: total pool = numSeats × N days.
+     */
+    @GetMapping("/occupancy")
+    public ResponseEntity<Map<String, Object>> getOccupancyStats(
+            @RequestParam Integer flightId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        // Fetch flight to get total seat capacity
+        Flight flight = flightRepository.findById(flightId).orElse(null);
+        if (flight == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        int numSeats = flight.getNumSeats();
+        long numDays = ChronoUnit.DAYS.between(startDate, endDate) + 1; // inclusive
+
+        // Seat class distribution per day
+        int firstPerDay = (int) Math.round(numSeats * 0.20);
+        int businessPerDay = (int) Math.round(numSeats * 0.20);
+        int economyPerDay = numSeats - firstPerDay - businessPerDay; // remainder to economy
+
+        // Total available across the date range
+        long totalAvailable = numSeats * numDays;
+        long firstAvailable = firstPerDay * numDays;
+        long businessAvailable = businessPerDay * numDays;
+        long economyAvailable = economyPerDay * numDays;
+
+        // Fetch matching bookings
+        List<Booking> bookings = bookingRepository.findByFlightAndDateRange(flightId, startDate, endDate);
+
+        // Sum occupied seats by class
+        long totalOccupied = 0;
+        long firstOccupied = 0;
+        long businessOccupied = 0;
+        long economyOccupied = 0;
+
+        for (Booking b : bookings) {
+            int seats = b.getNumSeatsBook() != null ? b.getNumSeatsBook() : 0;
+            totalOccupied += seats;
+
+            String seatClass = b.getSeatClass();
+            if (seatClass != null) {
+                switch (seatClass.toLowerCase()) {
+                    case "first":
+                        firstOccupied += seats;
+                        break;
+                    case "business":
+                        businessOccupied += seats;
+                        break;
+                    default:
+                        economyOccupied += seats;
+                        break;
+                }
+            } else {
+                economyOccupied += seats;
+            }
+        }
+
+        // Build response
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("flightId", flightId);
+        stats.put("fromLocation", flight.getFromLocation());
+        stats.put("toLocation", flight.getToLocation());
+        stats.put("numSeatsPerDay", numSeats);
+        stats.put("numDays", numDays);
+
+        stats.put("totalAvailable", totalAvailable);
+        stats.put("totalOccupied", totalOccupied);
+        stats.put("totalOccupancyRate", totalAvailable > 0
+                ? Math.round((double) totalOccupied / totalAvailable * 10000.0) / 100.0
+                : 0);
+
+        stats.put("firstAvailable", firstAvailable);
+        stats.put("firstOccupied", firstOccupied);
+        stats.put("firstOccupancyRate", firstAvailable > 0
+                ? Math.round((double) firstOccupied / firstAvailable * 10000.0) / 100.0
+                : 0);
+
+        stats.put("businessAvailable", businessAvailable);
+        stats.put("businessOccupied", businessOccupied);
+        stats.put("businessOccupancyRate", businessAvailable > 0
+                ? Math.round((double) businessOccupied / businessAvailable * 10000.0) / 100.0
+                : 0);
+
+        stats.put("economyAvailable", economyAvailable);
+        stats.put("economyOccupied", economyOccupied);
+        stats.put("economyOccupancyRate", economyAvailable > 0
+                ? Math.round((double) economyOccupied / economyAvailable * 10000.0) / 100.0
+                : 0);
+
+        return ResponseEntity.ok(stats);
+    }
+
+    // GET /api/bookings/revenue
+    @GetMapping("/revenue")
+    public ResponseEntity<Map<String, Object>> getRevenueStats(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        
+        List<Booking> confirmedBookings = bookingRepository.findConfirmedBookingsByDateRange(startDate, endDate);
+        
+        BigDecimal totalRevenue = BigDecimal.ZERO;
+        BigDecimal firstRevenue = BigDecimal.ZERO;
+        BigDecimal businessRevenue = BigDecimal.ZERO;
+        BigDecimal econRevenue = BigDecimal.ZERO;
+        
+        Map<String, BigDecimal> routeRevenue = new HashMap<>(); // Key: Route String, Value: Revenue
+        
+        for (Booking b : confirmedBookings) {
+            BigDecimal price = b.getBookingPrice() != null ? b.getBookingPrice() : BigDecimal.ZERO;
+            totalRevenue = totalRevenue.add(price);
+            
+            String seatClass = b.getSeatClass() != null ? b.getSeatClass().toUpperCase() : "ECONOMY";
+            if ("FIRST".equals(seatClass)) firstRevenue = firstRevenue.add(price);
+            else if ("BUSINESS".equals(seatClass)) businessRevenue = businessRevenue.add(price);
+            else econRevenue = econRevenue.add(price);
+            
+            String from = b.getFromLocation();
+            String to = b.getToLocation();
+            String via = b.getVia();
+            
+            if (via != null && !via.trim().isEmpty()) {
+                String route1 = from + " → " + via;
+                String route2 = via + " → " + to;
+                String route3 = from + " → " + to;
+                routeRevenue.put(route1, routeRevenue.getOrDefault(route1, BigDecimal.ZERO).add(price));
+                routeRevenue.put(route2, routeRevenue.getOrDefault(route2, BigDecimal.ZERO).add(price));
+                routeRevenue.put(route3, routeRevenue.getOrDefault(route3, BigDecimal.ZERO).add(price));
+            } else {
+                String route = from + " → " + to;
+                routeRevenue.put(route, routeRevenue.getOrDefault(route, BigDecimal.ZERO).add(price));
+            }
+        }
+        
+        List<Map<String, Object>> routeList = routeRevenue.entrySet().stream()
+            .map(e -> {
+                Map<String, Object> m = new HashMap<>();
+                m.put("route", e.getKey());
+                m.put("revenue", e.getValue());
+                return m;
+            })
+            .sorted((m1, m2) -> ((BigDecimal)m2.get("revenue")).compareTo((BigDecimal)m1.get("revenue")))
+            .toList();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("totalRevenue", totalRevenue);
+        result.put("firstRevenue", firstRevenue);
+        result.put("businessRevenue", businessRevenue);
+        result.put("econRevenue", econRevenue);
+        result.put("totalBookings", confirmedBookings.size());
+        result.put("routeRevenue", routeList);
+        
+        return ResponseEntity.ok(result);
+    }
+
+    // GET /api/bookings/passengers
+    @GetMapping("/passengers")
+    public ResponseEntity<Map<String, Object>> getPassengerLists(
+            @RequestParam Integer flightId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        
+        List<Object[]> results = passengerRepository.findPassengersByFlightAndDateRange(flightId, startDate, endDate);
+        
+        Map<String, List<Map<String, Object>>> groupedPassengers = new java.util.TreeMap<>();
+
+        for (Object[] row : results) {
+            Passenger p = (Passenger) row[0];
+            Booking b = (Booking) row[1];
+            
+            String dateStr = b.getDateOfFlight().toString();
+            String assignedSeat = "Unassigned";
+            
+            if (flightId.equals(b.getFlight1())) {
+                assignedSeat = p.getSeat1() != null ? p.getSeat1() : "Unassigned";
+            } else if (flightId.equals(b.getFlight2())) {
+                assignedSeat = p.getSeat2() != null ? p.getSeat2() : "Unassigned";
+            }
+            
+            Map<String, Object> passMap = new HashMap<>();
+            passMap.put("passName", p.getPassName());
+            passMap.put("assignedSeat", assignedSeat);
+            passMap.put("seatClass", b.getSeatClass());
+            passMap.put("bookingId", b.getBookId());
+            
+            groupedPassengers.computeIfAbsent(dateStr, k -> new java.util.ArrayList<>()).add(passMap);
+        }
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("flightId", flightId);
+        response.put("passengersByDate", groupedPassengers);
+        
+        return ResponseEntity.ok(response);
+    }
+
+    // GET /api/bookings/cancellations/stats
+    @GetMapping("/cancellations/stats")
+    public ResponseEntity<Map<String, Object>> getCancellationStats(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            
+        List<Object[]> results = cancellationRepository.findCancellationsWithBookingsByDateRange(startDate, endDate);
+        
+        BigDecimal totalRefund = BigDecimal.ZERO;
+        BigDecimal firstRefund = BigDecimal.ZERO;
+        BigDecimal businessRefund = BigDecimal.ZERO;
+        BigDecimal econRefund = BigDecimal.ZERO;
+        
+        Map<String, BigDecimal> routeRefund = new HashMap<>();
+        
+        for (Object[] row : results) {
+            Cancellation c = (Cancellation) row[0];
+            Booking b = (Booking) row[1];
+            
+            BigDecimal refund = c.getRefundAmt() != null ? c.getRefundAmt() : BigDecimal.ZERO;
+            totalRefund = totalRefund.add(refund);
+            
+            String seatClass = b.getSeatClass() != null ? b.getSeatClass().toUpperCase() : "ECONOMY";
+            if ("FIRST".equals(seatClass)) firstRefund = firstRefund.add(refund);
+            else if ("BUSINESS".equals(seatClass)) businessRefund = businessRefund.add(refund);
+            else econRefund = econRefund.add(refund);
+            
+            String from = b.getFromLocation();
+            String to = b.getToLocation();
+            String via = b.getVia();
+            
+            if (via != null && !via.trim().isEmpty()) {
+                String route1 = from + " → " + via;
+                String route2 = via + " → " + to;
+                String route3 = from + " → " + to;
+                routeRefund.put(route1, routeRefund.getOrDefault(route1, BigDecimal.ZERO).add(refund));
+                routeRefund.put(route2, routeRefund.getOrDefault(route2, BigDecimal.ZERO).add(refund));
+                routeRefund.put(route3, routeRefund.getOrDefault(route3, BigDecimal.ZERO).add(refund));
+            } else {
+                String route = from + " → " + to;
+                routeRefund.put(route, routeRefund.getOrDefault(route, BigDecimal.ZERO).add(refund));
+            }
+        }
+        
+        List<Map<String, Object>> routeList = routeRefund.entrySet().stream()
+            .map(e -> {
+                Map<String, Object> m = new HashMap<>();
+                m.put("route", e.getKey());
+                m.put("refund", e.getValue());
+                return m;
+            })
+            .sorted((m1, m2) -> ((BigDecimal)m2.get("refund")).compareTo((BigDecimal)m1.get("refund")))
+            .toList();
+            
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalRefund", totalRefund);
+        response.put("firstRefund", firstRefund);
+        response.put("businessRefund", businessRefund);
+        response.put("econRefund", econRefund);
+        response.put("totalCancellations", results.size());
+        response.put("routeRefund", routeList);
+        
+        return ResponseEntity.ok(response);
     }
 }

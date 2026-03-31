@@ -1,2 +1,5 @@
 # Ignore local VS Code settings
 .vscode/settings.json
+
+# Ignore environment variables
+backend/.env

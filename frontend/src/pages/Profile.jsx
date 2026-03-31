@@ -29,7 +29,7 @@ const Profile = () => {
     if (window.confirm("Cancel this flight?")) {
       try {
         await axios.delete(`http://localhost:8080/api/bookings/${bookId}`);
-        setBookings(bookings.filter(b => b.bookId !== bookId));
+        setBookings(bookings.map(b => b.bookId === bookId ? { ...b, status: 'CANCELLED' } : b));
       // eslint-disable-next-line no-unused-vars
       } catch (err) { alert("Error connecting to server."); }
     }
@@ -75,10 +75,18 @@ const Profile = () => {
 
             <div style={{display: 'flex', alignItems: 'center', gap: '20px'}}>
               <div style={{textAlign: 'right'}}>
-                <div className="price-tag">₹{b.bookingPrice}</div>
+                <div className="price-tag">
+                  {b.status === 'CANCELLED' ? <s style={{color: '#94a3b8'}}>₹{b.bookingPrice}</s> : `₹${b.bookingPrice}`}
+                </div>
                 <small style={{color: '#64748b'}}>{new Date(b.dateOfFlight).toDateString()}</small>
               </div>
-              <button className="cancel-btn" onClick={() => handleCancel(b.bookId)}>Cancel</button>
+              {b.status === 'CANCELLED' ? (
+                <span style={{padding: '6px 12px', background: '#fee2e2', color: '#ef4444', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold'}}>
+                  CANCELLED
+                </span>
+              ) : (
+                <button className="cancel-btn" onClick={() => handleCancel(b.bookId)}>Cancel</button>
+              )}
             </div>
           </div>
         ))}

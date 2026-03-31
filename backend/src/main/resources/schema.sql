@@ -1,4 +1,5 @@
 -- Flight Booking System Schema
+DROP TABLE IF EXISTS Cancellations, Passengers, Booking, Flights, Crew, City, Users CASCADE;
 
 -- Users table
 CREATE TABLE IF NOT EXISTS Users (
@@ -31,8 +32,8 @@ CREATE TABLE IF NOT EXISTS Flights (
     PFirst DECIMAL(10, 2) NOT NULL,
     PBusiness DECIMAL(10, 2) NOT NULL,
     PEcon DECIMAL(10, 2) NOT NULL,
-    TakeoffT TIMESTAMP NOT NULL,
-    LandingT TIMESTAMP NOT NULL,
+    TakeoffT TIME NOT NULL,
+    LandingT TIME NOT NULL,
     CrewID INT REFERENCES Crew(CrewID)
 );
 
@@ -48,7 +49,8 @@ CREATE TABLE IF NOT EXISTS Booking (
     Via VARCHAR(100),
     ToLocation VARCHAR(100) NOT NULL,
     NumSeatsBook INT NOT NULL,
-    DateOfFlight DATE NOT NULL
+    DateOfFlight DATE NOT NULL,
+    Status VARCHAR(20) NOT NULL DEFAULT 'CONFIRMED' CHECK (Status IN ('CONFIRMED', 'CANCELLED'))
 );
 
 -- Passengers table
@@ -58,7 +60,7 @@ CREATE TABLE IF NOT EXISTS Passengers (
     PassName VARCHAR(200) NOT NULL,
     Seat1 VARCHAR(10),
     Seat2 VARCHAR(10),
-    Passport VARCHAR(50) NOT NULL
+    Passport VARCHAR(50)
 );
 
 -- Cancellations table
