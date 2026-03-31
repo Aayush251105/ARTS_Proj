@@ -1,4 +1,5 @@
 -- Flight Booking System Schema
+DROP TABLE IF EXISTS Cancellations, Passengers, Booking, Flights, Crew, City, Users CASCADE;
 
 -- Drop existing tables to recreate with correct schema
 DROP TABLE IF EXISTS Cancellations;
@@ -57,16 +58,17 @@ CREATE TABLE Booking (
     Via VARCHAR(100),
     ToLocation VARCHAR(100) NOT NULL,
     NumSeatsBook INT NOT NULL,
-    DateOfFlight DATE NOT NULL
+    DateOfFlight DATE NOT NULL,
+    Status VARCHAR(20) NOT NULL DEFAULT 'CONFIRMED' CHECK (Status IN ('CONFIRMED', 'CANCELLED'))
 );
 
 -- Passengers table
 CREATE TABLE Passengers (
     PNR SERIAL PRIMARY KEY,
     BookingID INT NOT NULL REFERENCES Booking(BookID),
-    PassName VARCHAR(100) NOT NULL,
-    Seat1 INT,
-    Seat2 INT,
+    PassName VARCHAR(200) NOT NULL,
+    Seat1 VARCHAR(10),
+    Seat2 VARCHAR(10),
     Passport TEXT -- Encrypted passport details
 );
 

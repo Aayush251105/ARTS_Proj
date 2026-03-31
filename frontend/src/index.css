@@ -63,3 +63,11 @@ button {
 input, select, textarea {
   font-family: inherit;
 }
+
+/* Admin pages need full width — override the #root constraint */
+#root:has(.admin-page-wrapper) {
+  width: 100%;
+  max-width: 100%;
+  border: none;
+  text-align: left;
+}

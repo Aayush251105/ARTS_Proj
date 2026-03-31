@@ -27,7 +27,6 @@ function Login() {
     e.preventDefault();
     setLoginError("");
     setLoginLoading(true);
-
     try {
       const res = await fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
@@ -35,16 +34,23 @@ function Login() {
         body: JSON.stringify({ email: loginForm.email, password: loginForm.password }),
       });
 
-      const data = await res.text();
+      const data = await res.json();
 
-      if (data.startsWith("SUCCESS")) {
-        const parts = data.split(":");
-        localStorage.setItem("userId",   parts[1]);
-        localStorage.setItem("role",     parts[2]);
-        localStorage.setItem("username", parts[3]);
-        window.location.href = parts[2] === "ADMIN" ? "/admin" : "/";
+      if (data.status === "SUCCESS") {
+        // Store JWT token and user info
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("username", data.username);
+
+        // Redirect based on role
+        if (data.role === "ADMIN") {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/";
+        }
       } else {
-        setLoginError(data || "Invalid email or password.");
+        setLoginError(data.message || data || "Invalid email or password.");
       }
     } catch {
       setLoginError("Could not connect to server. Please try again.");

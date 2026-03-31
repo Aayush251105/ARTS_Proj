@@ -1,6 +1,6 @@
 package com.team26.backend.service;
 
-import com.team26.backend.model.Flights;
+import com.team26.backend.model.Flight;
 import com.team26.backend.repository.FlightRepository;
 import com.team26.backend.repository.PassengerRepository;
 import org.springframework.stereotype.Service;
@@ -30,10 +30,10 @@ public class FlightService {
         String classKey = travelClass.toLowerCase();
 
         // ---------------- DIRECT ----------------
-        List<Flights> directFlights =
+        List<Flight> directFlights =
                 flightRepository.findByFromLocationIgnoreCaseAndToLocationIgnoreCase(from, to);
 
-        for (Flights f : directFlights) {
+        for (Flight f : directFlights) {
             Map<String, Object> map = new HashMap<>();
             map.put("type", "DIRECT");
             map.put("flight1", f);
@@ -45,15 +45,15 @@ public class FlightService {
         }
 
         // ---------------- CONNECTING ----------------
-        List<Flights> firstLegs = flightRepository.findByFromLocation(from);
+        List<Flight> firstLegs = flightRepository.findByFromLocation(from);
 
-        for (Flights f1 : firstLegs) {
+        for (Flight f1 : firstLegs) {
 
-            List<Flights> secondLegs =
+            List<Flight> secondLegs =
                     flightRepository.findByFromLocationIgnoreCaseAndToLocationIgnoreCase(
                             f1.getToLocation(), to);
 
-            for (Flights f2 : secondLegs) {
+            for (Flight f2 : secondLegs) {
 
                 // ⏱️ 2 hour rule with LocalTime support
                 if (isValidConnectingFlight(f1.getLandingT(), f2.getTakeoffT())) {
@@ -123,7 +123,7 @@ public class FlightService {
         String date
     ) {
 
-    Flights flight = flightRepository.findById(flightId).orElseThrow();
+    Flight flight = flightRepository.findById(flightId).orElseThrow();
     int totalSeats = flight.getNumSeats();
 
     int firstLimit = (int) Math.ceil(totalSeats * 0.2);

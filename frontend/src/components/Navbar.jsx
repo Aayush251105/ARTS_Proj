@@ -12,13 +12,15 @@ function Navbar() {
     setIsLoggedIn(!!localStorage.getItem("userId"));
   }, []);
 
+  const role = localStorage.getItem("role");
   const navigate = useNavigate();
+  const username = localStorage.getItem("username");
 
   const handleLogout = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("role");
     localStorage.removeItem("username");
-    
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
     navigate("/login");
   };
@@ -37,13 +39,20 @@ function Navbar() {
             <Link to="/login" className="navbar-btn-solid">Sign Up</Link>
           </>
         ) : (
-          <button className="navbar-btn-logout" onClick={handleLogout}>
-            Logout
-          </button>
+          <>
+            {role === "ADMIN" && (
+              <Link to="/admin" className="navbar-btn-ghost" style={{marginRight: '12px'}}>
+                Dashboard
+              </Link>
+            )}
+            <button className="navbar-btn-logout" onClick={handleLogout}>
+              Logout
+            </button>
+          </>
         )}
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;

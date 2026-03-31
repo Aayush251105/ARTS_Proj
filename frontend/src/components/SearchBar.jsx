@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 function SearchBar() {
   const [cities, setCities] = useState([]);
-
   const [form, setForm] = useState({
     from: null,
     to: null,
@@ -15,7 +14,6 @@ function SearchBar() {
 
   const navigate = useNavigate();
 
-  // ✅ Fetch cities
   useEffect(() => {
     fetch("http://localhost:8080/api/cities")
       .then((res) => res.json())
@@ -23,7 +21,6 @@ function SearchBar() {
       .catch((err) => console.error(err));
   }, []);
 
-  // ✅ Handle city select
   const handleCityChange = (e, type) => {
     const selectedCity = cities.find(
         (c) => c.cityId === parseInt(e.target.value)
@@ -58,7 +55,6 @@ function SearchBar() {
     });
   };
 
-  // ✅ Handle normal inputs
   const handleChange = (e) => {
     let val = e.target.value;
     if (e.target.name === 'passengers') {
@@ -67,7 +63,6 @@ function SearchBar() {
     setForm({ ...form, [e.target.name]: val });
   };
 
-  // ✅ Submit
   const handleSearch = (e) => {
     e.preventDefault();
     if (!form.fromId || !form.toId) {

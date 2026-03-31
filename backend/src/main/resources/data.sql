@@ -34,7 +34,7 @@ INSERT INTO Crew (CrewCapacity) VALUES (10), (15), (20), (25), (12), (18);
 -- Times only - flights repeat daily at these times
 INSERT INTO Flights (FromLocation, ToLocation, NumSeats, PFirst, PBusiness, PEcon, TakeoffT, LandingT, CrewID) VALUES
 ('Delhi', 'Mumbai', 180, 5000.00, 3000.00, 1500.00, '10:00:00', '12:30:00', 1),
-('Mumbai', 'London', 250, 50000.00, 30000.00, 12000.00, '14:30:00', '02:00:00', 2),
+('Mumbai', 'London', 250, 50000.00, 30000.00, 12000.00, '14:00:00', '02:00:00', 2),
 ('Delhi', 'Bangalore', 200, 6000.00, 3500.00, 1800.00, '08:00:00', '10:15:00', 3),
 ('Mumbai', 'Singapore', 300, 55000.00, 32000.00, 14000.00, '15:30:00', '05:00:00', 4),
 ('London', 'New York', 280, 45000.00, 28000.00, 10000.00, '18:00:00', '08:00:00', 5),
@@ -44,17 +44,17 @@ INSERT INTO Flights (FromLocation, ToLocation, NumSeats, PFirst, PBusiness, PEco
 
 -- 6. BOOKINGS
 -- Mapping UserIDs and FlightIDs precisely based on the order above
-INSERT INTO Booking (UserID, Flight1, SeatClass, BookingPrice, FromLocation, ToLocation, NumSeatsBook, DateOfFlight) VALUES
-(2, 1, 'Economy', 1500.00, 'Delhi', 'Mumbai', 1, '2026-04-01'), -- ID 1
-(2, 3, 'Business', 3500.00, 'Delhi', 'Bangalore', 1, '2026-04-05'), -- ID 2
-(2, 6, 'Economy', 1200.00, 'Mumbai', 'Bangalore', 1, '2026-04-10'), -- ID 3
-(2, 7, 'First', 7000.00, 'Delhi', 'Goa', 1, '2026-04-15'), -- ID 4
-(4, 2, 'Economy', 12000.00, 'Mumbai', 'London', 1, '2026-04-02'), -- ID 5
-(5, 5, 'Business', 28000.00, 'London', 'New York', 1, '2026-04-07'), -- ID 6
-(5, 8, 'Economy', 1900.00, 'Bangalore', 'Delhi', 1, '2026-04-20'), -- ID 7
-(3, 4, 'First', 55000.00, 'Mumbai', 'Singapore', 1, '2026-04-06'), -- ID 8
-(3, 5, 'Business', 28000.00, 'London', 'New York', 1, '2026-04-07'), -- ID 9
-(3, 6, 'Economy', 1200.00, 'Mumbai', 'Bangalore', 1, '2026-04-10'); -- ID 10
+INSERT INTO Booking (UserID, Flight1, SeatClass, BookingPrice, FromLocation, ToLocation, NumSeatsBook, DateOfFlight, Status) VALUES
+(2, 1, 'Economy', 1500.00, 'Delhi', 'Mumbai', 1, '2026-04-01', 'CANCELLED'), -- ID 1
+(2, 3, 'Business', 3500.00, 'Delhi', 'Bangalore', 1, '2026-04-05', 'CONFIRMED'), -- ID 2
+(2, 6, 'Economy', 1200.00, 'Mumbai', 'Bangalore', 1, '2026-04-10', 'CONFIRMED'), -- ID 3
+(2, 7, 'First', 7000.00, 'Delhi', 'Goa', 1, '2026-04-15', 'CONFIRMED'), -- ID 4
+(4, 2, 'Economy', 12000.00, 'Mumbai', 'London', 1, '2026-04-02', 'CANCELLED'), -- ID 5
+(5, 5, 'Business', 28000.00, 'London', 'New York', 1, '2026-04-07', 'CANCELLED'), -- ID 6
+(5, 8, 'Economy', 1900.00, 'Bangalore', 'Delhi', 1, '2026-04-20', 'CONFIRMED'), -- ID 7
+(3, 4, 'First', 55000.00, 'Mumbai', 'Singapore', 1, '2026-04-06', 'CONFIRMED'), -- ID 8
+(3, 5, 'Business', 28000.00, 'London', 'New York', 1, '2026-04-07', 'CONFIRMED'), -- ID 9
+(3, 6, 'Economy', 1200.00, 'Mumbai', 'Bangalore', 1, '2026-04-10', 'CONFIRMED'); -- ID 10
 
 -- 7. PASSENGERS
 -- Linked to BookingIDs 1 through 10
