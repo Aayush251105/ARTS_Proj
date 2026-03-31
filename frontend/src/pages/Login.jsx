@@ -1,7 +1,6 @@
 import { useState } from "react";
-import "../styles/signup.css"; // reuse same styles
-// Handelling submit 
-  import { useNavigate } from "react-router-dom";
+import "../styles/signup.css";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [form, setForm] = useState({
@@ -13,7 +12,6 @@ function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Handelling submit 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -28,29 +26,23 @@ function Login() {
         body: JSON.stringify(form),
       });
 
-      const data = await res.text();
+      const data = await res.json();
 
-      if (data.startsWith("SUCCESS")) {
-        const parts = data.split(":");
-        const userId = parts[1];
-        const role = parts[2];
-        const username = parts[3]; // <--- This is the new part from Java
+      if (data.status === "SUCCESS") {
+        // Store JWT token and user info
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("username", data.username);
 
-        // store temporarily
-        localStorage.setItem("userId", userId);
-        localStorage.setItem("role", role);
-        localStorage.setItem("username", username); // <--- Save it here!
-
-        window.location.href = "/"; // force refresh
-        // redirect based on role
-        if (role === "ADMIN") {
-          navigate("/admin");
+        // Redirect based on role
+        if (data.role === "ADMIN") {
+          window.location.href = "/admin";
         } else {
-          navigate("/");
+          window.location.href = "/";
         }
-
       } else {
-        alert(data);
+        alert(data.message || "Login failed");
       }
     } catch (err) {
       console.error(err);
@@ -82,7 +74,7 @@ function Login() {
         <button type="submit" style={{marginBottom:"5px"}}>Login</button>
         <hr />
         <p style={{ textAlign: "center", fontSize: "14px" , marginTop:"5px" , backgroundColor:"transparent" }}>
-            Don’t have an account? <a href="/signup" style={{backgroundColor:"transparent"}}>Sign Up</a>
+            Don't have an account? <a href="/signup" style={{backgroundColor:"transparent"}}>Sign Up</a>
         </p>
       </form>
     </div>

@@ -1,6 +1,5 @@
-*{
-  background-color: #393838;
+* {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  box-sizing: border-box;
 }
