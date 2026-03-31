@@ -89,6 +89,8 @@ body {
     transition: all 0.2s ease;
 }
 
+/* Add these to your existing Profile.css */
+
 .header-actions {
     display: flex;
     gap: 10px;
@@ -107,6 +109,7 @@ body {
 
 .edit-dropdown {
     position: absolute !important;
+    /* This anchors it 10px below the header bottom and aligns to the right */
     top: calc(100% + 10px); 
     right: 0;
     
@@ -151,6 +154,8 @@ body {
 
 .save-btn { flex: 1; background: #1E3A8A !important; color: white !important; border: none; padding: 10px; border-radius: 6px; cursor: pointer; }
 .close-btn { flex: 1; background: #F3F4F6 !important; color: #374151 !important; border: none; padding: 10px; border-radius: 6px; cursor: pointer; }
+
+/* Keep all your previous .flight-card and header styles below... */
 
 .flight-card:hover {
     transform: translateY(-2px);
@@ -282,25 +287,5 @@ body {
 .back-home-btn:hover {
     background-color: #FFFFFF !important;
     color: #1E3A8A !important;
-    transform: translateX(-4px);
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.welcome-text {
-    margin: 0 0 4px 0;
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #FFFFFF !important;
-    background-color: transparent !important;
-}
-
-.user-meta-text {
-    color: rgba(255,255,255,0.75) !important;
-    background-color: transparent !important;
-    font-size: 0.85rem;
+    transform: translateX(-4px); /* Subtle "moving back" animation */
 }

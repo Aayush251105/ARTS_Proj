@@ -95,21 +95,18 @@ public class FlightService {
         return result;
     }
 
-    // Validate connecting flight with 2-hour layover rule for LocalTime
+    // Validate connecting flight with 1-hour layover rule for LocalTime
     private boolean isValidConnectingFlight(java.time.LocalTime landingTime, java.time.LocalTime takeoffTime) {
-        // Add 2 hours to landing time for minimum connection time
+        // Add 1 hour to landing time for minimum connection time
         java.time.LocalTime minDepartureTime = landingTime.plusHours(2);
         
-        // Case 1: Both times are on same day pattern (no overnight consideration)
-        // Use !isBefore which means >= (greater than or equal to)
+        // Case 1: Both times are on same day pattern
         if (!takeoffTime.isBefore(minDepartureTime)) {
             return true;
         }
         
-        // Case 2: Landing is late, takeoff is early morning (overnight scenario)
-        // If landing > 20:00 and takeoff < 05:00, it's likely overnight
+        // Case 2: Overnight scenario — landing late, takeoff early morning
         if (landingTime.isAfter(java.time.LocalTime.of(20, 0)) && takeoffTime.isBefore(java.time.LocalTime.of(5, 0))) {
-            // Check if takeoff time (next day) + 24 hours > landing time + 2 hours
             java.time.LocalTime adjustedTakeoff = takeoffTime.plusHours(24);
             return !adjustedTakeoff.isBefore(minDepartureTime);
         }

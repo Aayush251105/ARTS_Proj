@@ -8,7 +8,6 @@ function Navbar() {
   );
 
   useEffect(() => {
-    // Allows navbar to catch up if login state changes
     setIsLoggedIn(!!localStorage.getItem("userId"));
   }, []);
 
@@ -41,10 +40,13 @@ function Navbar() {
         ) : (
           <>
             {role === "ADMIN" && (
-              <Link to="/admin" className="navbar-btn-ghost" style={{marginRight: '12px'}}>
+              <Link to="/admin" className="navbar-btn-ghost" style={{marginRight: '4px'}}>
                 Dashboard
               </Link>
             )}
+            <Link to="/profile" className="navbar-btn-ghost">
+              👤 {username || "Profile"}
+            </Link>
             <button className="navbar-btn-logout" onClick={handleLogout}>
               Logout
             </button>

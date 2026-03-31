@@ -42,7 +42,6 @@ const Profile = () => {
       }
     };
     if (user.userID) fetchData();
-    else setLoading(false);
   }, [user.userID]);
 
   // 2. Handle Outside Click for Dropdown
@@ -87,7 +86,7 @@ const Profile = () => {
 
     if (window.confirm(confirmMsg)) {
       try {
-        await axios.delete(`http://localhost:8080/api/bookings/${booking.bookId}`);
+        await axios.post(`http://localhost:8080/api/cancellations/${booking.bookId}`);
         setBookings(prev => prev.map(item => item.bookId === booking.bookId ? { ...item, status: 'CANCELLED' } : item));
         alert("Flight cancelled.");
       } catch (err) {
@@ -96,19 +95,7 @@ const Profile = () => {
     }
   };
 
-  if (loading) return <div className="profile-page-wrapper"><div className="profile-container"><p>Loading...</p></div></div>;
-
-  if (!user.userID) {
-    return (
-      <div className="profile-page-wrapper">
-        <div className="profile-container">
-          <p style={{textAlign:'center', marginTop:'60px', color:'#6B7280'}}>
-            Please <a href="/login" style={{color:'#1E3A8A'}}>log in</a> to view your profile.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <div className="profile-page-wrapper">Loading...</div>;
 
   return (
     <div className="profile-page-wrapper">
@@ -181,10 +168,7 @@ const Profile = () => {
                 <div className={`price-tag ${b.status === 'CANCELLED' ? 'price-tag-cancelled' : ''}`}>₹{b.bookingPrice}</div>
                 <small className="flight-date">{new Date(b.dateOfFlight).toDateString()}</small>
               </div>
-              {b.status === 'CANCELLED'
-                ? <span className="refund-status">Refund Processed</span>
-                : <button className="cancel-btn" onClick={() => handleCancel(b)}>Cancel</button>
-              }
+              {b.status === 'CANCELLED' ? <span className="refund-status">Refund Processed</span> : <button className="cancel-btn" onClick={() => handleCancel(b)}>Cancel</button>}
             </div>
           </div>
         ))}

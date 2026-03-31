@@ -100,6 +100,7 @@ public class BookingController {
             booking.setToLocation(bookingRequest.getToLocation());
             booking.setNumSeatsBook(bookingRequest.getNumSeatsBook());
             booking.setDateOfFlight(LocalDate.parse(bookingRequest.getDateOfFlight()));
+            booking.setStatus("CONFIRMED");
 
             Booking savedBooking = bookingRepository.save(booking);
             System.out.println("✅ Booking saved with ID: " + savedBooking.getBookId());

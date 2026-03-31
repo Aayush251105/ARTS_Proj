@@ -9,12 +9,12 @@ function AdminLayout({ children }) {
   const location = useLocation();
 
   const navLinks = [
-    { path: "/admin", label: "Dashboard", icon: "fa-solid fa-grid-2" },
-    { path: "/admin/resources", label: "Current Resources", icon: "fa-solid fa-server" },
-    { path: "/admin/occupancy", label: "Flight Occupancy", icon: "fa-solid fa-chart-bar" },
-    { path: "/admin/revenue", label: "Revenue Reports", icon: "fa-solid fa-chart-line" },
-    { path: "/admin/passengers", label: "Passenger Lists", icon: "fa-solid fa-users" },
-    { path: "/admin/cancellations", label: "Cancellations & Refunds", icon: "fa-solid fa-ban" },
+    { path: "/admin", label: "Dashboard", icon: "fa-solid fa-chart-pie fa-fw" },
+    { path: "/admin/resources", label: "Current Resources", icon: "fa-solid fa-server fa-fw" },
+    { path: "/admin/occupancy", label: "Flight Occupancy", icon: "fa-solid fa-chart-bar fa-fw" },
+    { path: "/admin/revenue", label: "Revenue Reports", icon: "fa-solid fa-chart-line fa-fw" },
+    { path: "/admin/passengers", label: "Passenger Lists", icon: "fa-solid fa-users fa-fw" },
+    { path: "/admin/cancellations", label: "Cancellations & Refunds", icon: "fa-solid fa-ban fa-fw" },
   ];
 
   const isActive = (path) => {
