@@ -10,12 +10,11 @@ const Profile = () => {
     const userId = localStorage.getItem("userId");
     const role = localStorage.getItem("role");
     const username = localStorage.getItem("username");
-    return userId ? { userID: userId, role, username: username || "Neil" } : null;
+    return userId ? { userID: userId, role, username: username || "Passenger" } : null;
   });
   
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [cancelledIds, setCancelledIds] = useState([]);
 
   useEffect(() => {
     if (user?.userID) fetchBookings(user.userID);
@@ -51,7 +50,11 @@ const Profile = () => {
     if (window.confirm(confirmMsg)) {
       try {
         await axios.post(`http://localhost:8080/api/cancellations/${booking.bookId}`);
-        setCancelledIds(prev => [...prev, booking.bookId]); 
+        setBookings((prev) =>
+          prev.map((item) =>
+            item.bookId === booking.bookId ? { ...item, status: 'CANCELLED' } : item
+          )
+        );
         alert("Flight cancelled successfully. Refund processed.");
       } catch (err) {
         console.error(err);
@@ -97,7 +100,7 @@ const Profile = () => {
         </h2>
         
         {bookings.map((b) => {
-          const isCancelled = cancelledIds.includes(b.bookId) || b.status === 'CANCELLED';
+          const isCancelled = b.status === 'CANCELLED';
 
           return (
             <div key={b.bookId} className={`flight-card ${isCancelled ? 'cancelled-card' : ''}`}>

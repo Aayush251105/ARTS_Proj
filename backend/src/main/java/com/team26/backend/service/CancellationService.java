@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.team26.backend.model.Booking;
 import com.team26.backend.model.Cancellation;
@@ -35,6 +36,7 @@ public class CancellationService {
         return price.multiply(BigDecimal.valueOf(percentage));
     }
 
+    @Transactional
     public Cancellation cancelBooking(Integer bookId) {
         Booking booking = bookingRepository.findById(bookId)
             .orElseThrow(() -> new RuntimeException("Booking not found"));
@@ -42,15 +44,15 @@ public class CancellationService {
         LocalDateTime flightTime = booking.getDateOfFlight().atTime(10, 0);
         BigDecimal refundAmount = calculateRefund(flightTime, booking.getBookingPrice());
 
+        booking.setStatus("CANCELLED");
+        bookingRepository.save(booking);
+
         Cancellation cancellation = new Cancellation();
         cancellation.setBookId(bookId);
+        cancellation.setCancellationDate(LocalDateTime.now());
         cancellation.setRefundAmt(refundAmount);
-        
-        // STEP 1: Save the log
         cancellationRepository.save(cancellation);
-        
-        // STEP 2: Just return it for now WITHOUT deleting the booking
-        // This will prove if the "Save" part works!
+
         return cancellation;
     }
 }

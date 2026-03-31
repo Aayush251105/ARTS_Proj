@@ -51,7 +51,7 @@ public class BookingController {
 
     // CANCEL a booking
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<?> deleteBooking(@PathVariable Long bookId) {
+    public ResponseEntity<?> deleteBooking(@PathVariable Integer bookId) {
         Booking booking = bookingRepository.findById(bookId).orElse(null);
         if (booking != null && !"CANCELLED".equals(booking.getStatus())) {
             booking.setStatus("CANCELLED");
