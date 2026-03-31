@@ -3,10 +3,8 @@ import "../styles/signup.css";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
+  const [form, setForm] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -16,13 +14,10 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const res = await fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
@@ -45,7 +40,6 @@ function Login() {
         alert(data.message || "Login failed");
       }
     } catch (err) {
-      console.error(err);
       alert("Server error");
     }
   };
@@ -53,23 +47,34 @@ function Login() {
   return (
     <div className="signup-container">
       <form className="signup-form" onSubmit={handleSubmit}>
-        <h2>Login</h2>
+        <div className="auth-toggle">
+          <button type="button" className="auth-tab active">Login</button>
+          <button type="button" className="auth-tab" onClick={() => navigate('/signup')}>Signup</button>
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-          required
-        />
+        <h2>Welcome Back</h2>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          required
-        />
+        <div style={{ background: 'transparent' }}>
+            <label>Email Address</label>
+            <input 
+                type="email" 
+                name="email" 
+                placeholder="Enter Email Address" 
+                onChange={handleChange} 
+                required 
+            />
+        </div>
+
+        <div style={{ background: 'transparent' }}>
+            <label>Password</label>
+            <input 
+                type="password" 
+                name="password" 
+                placeholder="Enter Password" 
+                onChange={handleChange} 
+                required 
+            />
+        </div>
 
         <button type="submit" style={{marginBottom:"5px"}}>Login</button>
         <hr />

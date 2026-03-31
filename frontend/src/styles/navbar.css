@@ -1,13 +1,36 @@
+/* navbar.css */
+
 .navbar {
-  width: 100%;
-  height: 70px;
-  background-color: #3b82f6;
-  color: white;
+    width: 100vw !important;
+    height: 70px;
+    background-color: #1E3A8A !important; /* Primary Blue */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 60px;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Fix the Logo Background */
+.logo-container, .logo {
+    background-color: transparent !important;
+    color: #FFFFFF !important;
+    text-decoration: none;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
 
+<<<<<<< ours
+.nav-links {
+    display: flex;
+    gap: 15px;
+    background-color: transparent !important;
+=======
   padding: 0 40px;
   box-sizing: border-box;
   position: sticky;
@@ -19,14 +42,36 @@
   text-decoration: none;
   color: white;
   background: transparent;
+>>>>>>> theirs
 }
 
-.logo {
-  font-size: 30px;
-  font-weight: bold;
-  background-color: transparent;
+/* Profile & Logout Buttons */
+.nav-profile-btn, .nav-logout-btn, .login-btn, .signup-btn {
+    padding: 8px 20px;
+    border-radius: 8px; /* System Radius */
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
 }
 
+<<<<<<< ours
+.nav-profile-btn {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.nav-logout-btn {
+    background-color: #EF4444 !important; /* Red for logout */
+    color: white !important;
+}
+
+/* Add to your existing navbar.css */
+.nav-logout-btn:hover {
+    background-color: #DC2626 !important; /* Darker Red */
+    transform: translateY(-1px);
+=======
 .nav-links {
   display: flex;
   gap: 12px;
@@ -65,10 +110,30 @@
 
 .nav-link.dashboard-link i {
   font-size: 13px;
+>>>>>>> theirs
 }
 
-.login-btn,
 .signup-btn {
+  <<<<<<< ours
+    background-color: #10B981 !important; /* Available Green */
+    color: white !important;
+}
+
+.login-btn {
+    background-color: transparent !important;
+    color: white !important;
+    border: 1px solid white !important;
+}
+
+.nav-profile-btn:hover, .login-btn:hover {
+    background-color: white !important;
+    color: #1E3A8A !important;
+}
+
+/* Force everything inside navbar to ignore the global grey */
+.navbar * {
+    background-color: transparent;
+=======
   padding: 8px 16px;
   border: none;
   cursor: pointer;
@@ -88,13 +153,17 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
-.signup-btn {
-  background-color: rgb(230, 230, 230);
-  color: black;
-  border: 1px solid black;
-  border-radius: 2px;
+.nav-profile-btn:hover, .login-btn:hover {
+    background-color: white !important;
+    color: #1E3A8A !important;
+}
+
+/* Force everything inside navbar to ignore the global grey */
+.navbar * {
+    background-color: transparent;
 }
 
 .signup-btn:hover {
   background-color: white;
+>>>>>>> theirs
 }

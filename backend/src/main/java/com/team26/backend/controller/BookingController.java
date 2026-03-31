@@ -44,13 +44,14 @@ public class BookingController {
 
     // GET bookings by user
     @GetMapping("/user/{userId}")
-    public List<Booking> getBookingsByUserId(@PathVariable Long userId) {
-        return bookingRepository.findByUserId(userId);
+    public List<Booking> getBookingsByUserId(@PathVariable Integer userId) {
+        // CHANGED: Now calls the method that checks for cancellation status
+        return bookingRepository.findByUserIdWithStatus(userId);
     }
 
     // CANCEL a booking
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<?> deleteBooking(@PathVariable Long bookId) {
+    public ResponseEntity<?> deleteBooking(@PathVariable Integer bookId) {
         Booking booking = bookingRepository.findById(bookId).orElse(null);
         if (booking != null && !"CANCELLED".equals(booking.getStatus())) {
             booking.setStatus("CANCELLED");

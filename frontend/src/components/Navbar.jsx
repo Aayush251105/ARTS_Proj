@@ -1,6 +1,6 @@
-import "../styles/navbar.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import '../styles/navbar.css';
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -9,6 +9,7 @@ function Navbar() {
 
   const role = localStorage.getItem("role");
   const navigate = useNavigate();
+  const username = localStorage.getItem("username");
 
   const handleLogout = () => {
     localStorage.removeItem("userId");
@@ -46,22 +47,22 @@ function Navbar() {
 
         {!isLoggedIn ? (
           <>
-            <Link to="/login">
-              <button className="login-btn">Login</button>
-            </Link>
-
-            <Link to="/signup">
-              <button className="signup-btn">Sign Up</button>
-            </Link>
+            <button className="nav-profile-btn" onClick={() => navigate('/profile')}>
+              {username}'s Profile
+            </button>
+            <button className="nav-logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
           </>
         ) : (
-          <button className="login-btn" onClick={handleLogout}>
-            Logout
-          </button>
+          <>
+            <button className="login-btn" onClick={() => navigate('/login')}>Login</button>
+            <button className="signup-btn" onClick={() => navigate('/signup')}>Sign Up</button>
+          </>
         )}
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;

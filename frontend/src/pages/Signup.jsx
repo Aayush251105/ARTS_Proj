@@ -1,48 +1,32 @@
 import { useState } from "react";
 import "../styles/signup.css";
-// handle submit
 import { useNavigate } from "react-router-dom";
 
 function Signup() {
-  const [form, setForm] = useState({
-    username: "",
-    email: "",
-    password: "",
-    role: "USER",
-  });
+  const [form, setForm] = useState({ username: "", email: "", password: "" });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // handle on submit 
-  const navigate = useNavigate();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const res = await fetch("http://localhost:8080/api/auth/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...form,
-          role: "PASSENGER",
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, role: "PASSENGER" }),
       });
 
       const data = await res.text();
-
       if (data === "SUCCESS") {
         alert("Signup successful!");
-        navigate("/login"); // redirect
+        navigate("/login");
       } else {
-        alert(data); // show backend error
+        alert(data);
       }
     } catch (err) {
-      console.error(err);
       alert("Server error");
     }
   };
@@ -50,36 +34,35 @@ function Signup() {
   return (
     <div className="signup-container">
       <form className="signup-form" onSubmit={handleSubmit}>
+        <div className="auth-toggle">
+          <button type="button" className="auth-tab" onClick={() => navigate('/login')}>Login</button>
+          <button type="button" className="auth-tab active">Signup</button>
+        </div>
+
         <h2>Create Account</h2>
 
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          onChange={handleChange}
-          required
-        />
+        {/* Group 1 */}
+        <div className="input-group">
+          <label>Full Name</label>
+          <input type="text" name="username" placeholder="Enter Full Name" onChange={handleChange} required />
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-          required
-        />
+        {/* Group 2 */}
+        <div className="input-group">
+          <label>Email Address</label>
+          <input type="email" name="email" placeholder="Enter Email Address" onChange={handleChange} required />
+        </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          required
-        />
+        {/* Group 3 */}
+        <div className="input-group">
+          <label>Password</label>
+          <input type="password" name="password" placeholder="Enter Password" onChange={handleChange} required />
+        </div>
 
-        <button type="submit" style={{marginBottom:"5px"}}>Sign Up</button>
-        <hr />
-        <p style={{ textAlign: "center", fontSize: "14px" , marginTop:"5px" , backgroundColor:"transparent" }}>
-            Already have an account? <a href="/login" style={{backgroundColor:"transparent"}}>Login</a>
+        <button type="submit">Register Now</button>
+        
+        <p className="footer-text">
+          Already have an account? <a href="/login">Login</a>
         </p>
       </form>
     </div>

@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/Profile.css'; // Import the new CSS file
+import '../styles/Profile.css';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
+  const navigate = useNavigate();
+  
   const [user] = useState(() => {
     const userId = localStorage.getItem("userId");
     const role = localStorage.getItem("role");
@@ -21,77 +24,118 @@ const Profile = () => {
     try {
       const res = await axios.get(`http://localhost:8080/api/bookings/user/${id}`);
       setBookings(res.data);
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
-  };
-
-  const handleCancel = async (bookId) => {
-    if (window.confirm("Cancel this flight?")) {
-      try {
-        await axios.delete(`http://localhost:8080/api/bookings/${bookId}`);
-        setBookings(bookings.map(b => b.bookId === bookId ? { ...b, status: 'CANCELLED' } : b));
-      // eslint-disable-next-line no-unused-vars
-      } catch (err) { alert("Error connecting to server."); }
+    } catch (err) { 
+      console.error(err); 
+    } finally { 
+      setLoading(false); 
     }
   };
 
-  if (loading) return <div className="profile-container">Loading...</div>;
+  const calculateExpectedRefund = (flightDate, price) => {
+    const now = new Date();
+    const flight = new Date(flightDate);
+    const diffInHours = (flight - now) / (1000 * 60 * 60);
+
+    if (diffInHours >= 48) return { percent: 75, amount: price * 0.75 };
+    if (diffInHours >= 24) return { percent: 50, amount: price * 0.50 };
+    if (diffInHours >= 12) return { percent: 25, amount: price * 0.25 };
+    return { percent: 0, amount: 0 };
+  };
+
+  const handleCancel = async (booking) => {
+    const refund = calculateExpectedRefund(booking.dateOfFlight, booking.bookingPrice);
+    
+    const confirmMsg = `Are you sure you want to cancel your flight to ${booking.toLocation}?\n\nRefund Policy Applied:\nRefund Percentage: ${refund.percent}%\nEstimated Refund: ₹${refund.amount.toFixed(2)}`;
+
+    if (window.confirm(confirmMsg)) {
+      try {
+        await axios.post(`http://localhost:8080/api/cancellations/${booking.bookId}`);
+        setBookings((prev) =>
+          prev.map((item) =>
+            item.bookId === booking.bookId ? { ...item, status: 'CANCELLED' } : item
+          )
+        );
+        alert("Flight cancelled successfully. Refund processed.");
+      } catch (err) {
+        console.error(err);
+        alert("Error processing cancellation.");
+      }
+    }
+  };
+
+  useEffect(() => {
+      document.documentElement.style.overflow = 'auto';
+      document.body.style.overflow = 'auto';
+      return () => {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+      };
+    }, []);
+
+  if (loading) return <div className="profile-page-wrapper"><div className="profile-container">Loading...</div></div>;
 
   return (
-    <div className="profile-container">
-      <div className="profile-card">
+    <div className="profile-page-wrapper">
+      <div className="profile-container">
         
-        {/* Header Section */}
+        {/* --- UPDATED HEADER WITH BACK BUTTON --- */}
         <div className="user-header">
           <div className="user-info">
             <div className="avatar-circle">{user.username[0].toUpperCase()}</div>
             <div>
-              <h1 style={{margin: 0}}>Welcome, {user.username}</h1>
-              <small>{user.role} Account • ID: {user.userID}</small>
+              <h1 style={{margin: 0, color: 'white'}}>Welcome, {user.username}</h1>
+              <small style={{color: 'rgba(255,255,255,0.8)'}}>{user.role} Account • ID: {user.userID}</small>
             </div>
           </div>
-          <button onClick={() => {localStorage.clear(); window.location.href="/login"}} 
-                  style={{background: 'none', border: '1px solid white', color: 'white', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer'}}>
-            Logout
+          
+          {/* THE BUTTON IS NOW HERE IN THE MAIN RETURN */}
+          <button className="back-home-btn" onClick={() => navigate('/')}>
+            ← Back to Home
           </button>
         </div>
 
         {/* List of Flights */}
-        <h2 style={{color: '#334155', marginBottom: '20px'}}>Your Trips</h2>
+        <h2 className="section-title">
+          Your Booked Trips
+        </h2>
         
-        {bookings.map((b) => (
-          <div key={b.bookId} className="flight-card">
-            <div className="route-section">
-              <div className="city-box">
-                <h3>{b.fromLocation}</h3>
-                <span>Origin</span>
-              </div>
-              <div className="plane-divider">✈</div>
-              <div className="city-box">
-                <h3>{b.toLocation}</h3>
-                <span>Destination</span>
-              </div>
-            </div>
+        {bookings.map((b) => {
+          const isCancelled = b.status === 'CANCELLED';
 
-            <div style={{display: 'flex', alignItems: 'center', gap: '20px'}}>
-              <div style={{textAlign: 'right'}}>
-                <div className="price-tag">
-                  {b.status === 'CANCELLED' ? <s style={{color: '#94a3b8'}}>₹{b.bookingPrice}</s> : `₹${b.bookingPrice}`}
+          return (
+            <div key={b.bookId} className={`flight-card ${isCancelled ? 'cancelled-card' : ''}`}>
+              <div className="route-section">
+                <div className="city-box">
+                  {isCancelled && <span className="cancelled-badge">CANCELLED</span>}
+                  <h3>{b.fromLocation}</h3>
+                  <span>Origin</span>
                 </div>
-                <small style={{color: '#64748b'}}>{new Date(b.dateOfFlight).toDateString()}</small>
+                <div className="plane-divider">✈</div>
+                <div className="city-box">
+                  <h3>{b.toLocation}</h3>
+                  <span>Destination</span>
+                </div>
               </div>
-              {b.status === 'CANCELLED' ? (
-                <span style={{padding: '6px 12px', background: '#fee2e2', color: '#ef4444', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold'}}>
-                  CANCELLED
-                </span>
-              ) : (
-                <button className="cancel-btn" onClick={() => handleCancel(b.bookId)}>Cancel</button>
-              )}
-            </div>
-          </div>
-        ))}
 
-        {bookings.length === 0 && <p style={{textAlign: 'center', color: '#94a3b8'}}>No active bookings.</p>}
+              <div className="action-section">
+                <div className="price-info">
+                  <div className={`price-tag ${isCancelled ? 'price-tag-cancelled' : ''}`}>
+                    ₹{b.bookingPrice}
+                  </div>
+                  <small className="flight-date">{new Date(b.dateOfFlight).toDateString()}</small>
+                </div>
+                
+                {isCancelled ? (
+                  <span className="refund-status">Refund Processed</span>
+                ) : (
+                  <button className="cancel-btn" onClick={() => handleCancel(b)}>Cancel</button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+
+        {bookings.length === 0 && <p className="empty-msg">No active bookings found.</p>}
       </div>
     </div>
   );
