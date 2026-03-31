@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/navbar.css';
 
@@ -45,7 +45,7 @@ function Navbar() {
           </Link>
         )}
 
-        {!isLoggedIn ? (
+        {isLoggedIn ? (
           <>
             <button className="nav-profile-btn" onClick={() => navigate('/profile')}>
               {username}'s Profile
