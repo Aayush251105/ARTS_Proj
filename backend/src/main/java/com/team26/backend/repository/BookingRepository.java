@@ -27,4 +27,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("flightId") Integer flightId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+
+    /**
+     * Find CONFIRMED bookings within a date range for revenue calculation.
+     */
+    @Query("SELECT b FROM Booking b WHERE b.dateOfFlight >= :startDate AND b.dateOfFlight <= :endDate AND b.status = 'CONFIRMED'")
+    List<Booking> findConfirmedBookingsByDateRange(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }

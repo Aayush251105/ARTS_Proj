@@ -25,10 +25,14 @@
 | `backend/.../model/Flight.java` | Flight JPA entity (all columns from Flights table) |
 | `backend/.../model/Crew.java` | Crew JPA entity (crewId, crewCapacity) |
 | `backend/.../model/Booking.java` | Booking JPA entity (includes flight1, flight2, via) |
+| `backend/.../model/Passenger.java` | Passenger JPA entity (passName, seat assignments) |
+| `backend/.../model/Cancellation.java` | Cancellation JPA entity (refundAmt, date) |
 | `backend/.../model/City.java` | City JPA entity (uses Lombok) |
 | **Backend — Repositories** | |
 | `backend/.../repository/FlightRepository.java` | Flight CRUD repository |
 | `backend/.../repository/CrewRepository.java` | Crew CRUD repository |
+| `backend/.../repository/PassengerRepository.java` | Passenger JPA repo with custom JPQL |
+| `backend/.../repository/CancellationRepository.java` | Cancellation JPA repo with custom JPQL |
 | **Backend — Controllers** | |
 | `backend/.../controller/FlightController.java` | Full CRUD REST API for Flights |
 | `backend/.../controller/CrewController.java` | Full CRUD REST API for Crews |
@@ -41,9 +45,9 @@
 | `frontend/src/pages/admin/AdminDashboard.jsx` | Main dashboard with 5 nav cards and 2 stat cards |
 | `frontend/src/pages/admin/AdminResources.jsx` | 3-tab CRUD manager (Flights, Cities, Crews) with modals |
 | `frontend/src/pages/admin/AdminOccupancy.jsx` | Flight occupancy stats with selector, date range, class breakdown |
-| `frontend/src/pages/admin/AdminRevenue.jsx` | Placeholder: Revenue Reports |
-| `frontend/src/pages/admin/AdminPassengers.jsx` | Placeholder: Passenger Lists |
-| `frontend/src/pages/admin/AdminCancellations.jsx` | Placeholder: Cancellations & Refunds |
+| `frontend/src/pages/admin/AdminRevenue.jsx` | Revenue Reports API integration and stat grids |
+| `frontend/src/pages/admin/AdminPassengers.jsx` | Passenger Lists flight search and directory |
+| `frontend/src/pages/admin/AdminCancellations.jsx` | Cancellations & Refunds API integration and stats |
 | **Documentation** | |
 | `ADMIN_DASHBOARD_HANDOVER.md` | This file |
 
@@ -92,10 +96,21 @@
 - **3 class breakdown cards**: First (20%), Business (20%), Economy (60%)
 - Each class card shows available/occupied/rate with color-coded progress bars
 
-### Other Sub-Pages (Placeholders)
-- `AdminRevenue.jsx` — Revenue Reports
-- `AdminPassengers.jsx` — Passenger Lists
-- `AdminCancellations.jsx` — Cancellations & Refunds
+### Revenue Reports (`/admin/revenue`)
+- **Date Inputs**: From Date & To Date (defaults to today).
+- **Functionality**: Aggregates booking price for confirmed bookings. Provides True Total and Class Breakdowns.
+- **Route Logic**: Implements Multi-Segment Route mapping. If a booking has a `Via` location, its total revenue is displayed concurrently across 3 separate route variations (`from->to`, `from->via`, `via->to`) in the detailed list, while maintaining accurate overarching totals.
+
+### Passenger Lists (`/admin/passengers`)
+- **Inputs**: Flight ID dropdown + Date Range.
+- **Functionality**: Joins `Passengers` table with `Booking` table using JPQL.
+- **Seat Mapping**: Dynamically selects `seat1` or `seat2` based on whether the selected Flight ID matched `Flight1` or `Flight2` on the booking.
+- **Display**: Grouped by travel date, showing name, seat, class, and booking ID without exposing sensitive passport details.
+
+### Cancellation & Refund Statistics (`/admin/cancellations`)
+- **Date Inputs**: From Date & To Date.
+- **Functionality**: Aggregates `RefundAmt` from the Cancellations table using JPQL for cancelled bookings within the range.
+- **Display**: Total Refunded, Class-specific refunds, and Multi-Segment route attribution mirroring the Revenue page logic.
 
 ---
 
@@ -178,6 +193,9 @@ All admin CSS custom properties are in `frontend/src/styles/admin.css`:
 | DELETE | `/api/bookings/{bookId}` | Delete a booking |
 | GET | `/api/bookings/count/today` | Count bookings with today's date |
 | GET | `/api/bookings/occupancy?flightId=&startDate=&endDate=` | Occupancy statistics |
+| GET | `/api/bookings/revenue?startDate=&endDate=` | Aggregate revenue and route splits |
+| GET | `/api/bookings/passengers?flightId=&startDate=&endDate=` | Return filtered passenger manifestations |
+| GET | `/api/bookings/cancellations/stats?startDate=&endDate=` | Aggregate cancel/refund statistics |
 
 ---
 
