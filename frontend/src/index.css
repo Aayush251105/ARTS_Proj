@@ -109,3 +109,11 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Admin pages need full width — override the #root constraint */
+#root:has(.admin-page-wrapper) {
+  width: 100%;
+  max-width: 100%;
+  border: none;
+  text-align: left;
+}

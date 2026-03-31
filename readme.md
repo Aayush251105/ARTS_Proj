@@ -24,6 +24,13 @@ first 20% - first class (1 - 20)
 next 20% - business class (21 - 40)
 rest 40% - economy class (41 - 100)
 
+# Set up an env file with (Recommended not compulsory, you can just leave as raw strings in application.properties file)
+inside backend/.env, add 
+JWT_SECRET=arts-flight-booking-super-secret-key 
+or 
+add it here application.properties,
+jwt.secret=arts-flight-booking-super-secret-key
+
 # Refund Logic (i forgor the actual one, we can change later)
 75% for 2+ days remaining
 50% for 1-2 days remaining

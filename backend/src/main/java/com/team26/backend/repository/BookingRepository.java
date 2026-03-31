@@ -1,8 +1,10 @@
 package com.team26.backend.repository;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,35 +14,52 @@ import org.springframework.stereotype.Repository;
 import com.team26.backend.model.Booking;
 
 @Repository
-public interface BookingRepository extends JpaRepository<Booking, Integer> { 
+public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
-    // We use a Native Query to perform the LEFT JOIN check
-    @Query(value = "SELECT b.BookID, b.UserID, b.SeatClass, b.BookingPrice, " +
-                   "b.FromLocation, b.ToLocation, b.DateOfFlight, b.NumSeatsBook, " +
-                   "CASE WHEN c.BookID IS NOT NULL THEN 'CANCELLED' ELSE 'CONFIRMED' END as status " +
-                   "FROM Booking b " +
-                   "LEFT JOIN Cancellations c ON b.BookID = c.BookID " +
-                   "WHERE b.UserID = :userId", nativeQuery = true)
-    List<Object[]> findBookingsWithStatusRaw(@Param("userId") Integer userId);
+    List<Booking> findByUserId(Integer userId);
 
-    // Helper method to convert the Raw Objects into Booking objects
+    @Query("SELECT c.bookId FROM Cancellation c WHERE c.bookId IN (" +
+           "SELECT b.bookId FROM Booking b WHERE b.userId = :userId)")
+    List<Integer> findCancelledBookingIdsByUserId(@Param("userId") Integer userId);
+
     default List<Booking> findByUserIdWithStatus(Integer userId) {
-        List<Object[]> results = findBookingsWithStatusRaw(userId);
+        List<Booking> results = findByUserId(userId);
+        Set<Integer> cancelledIds = new HashSet<>(findCancelledBookingIdsByUserId(userId));
         List<Booking> bookings = new ArrayList<>();
-        
-        for (Object[] row : results) {
-            Booking b = new Booking();
-            b.setBookId((Integer) row[0]);
-            b.setUserId((Integer) row[1]);
-            b.setSeatClass((String) row[2]);
-            b.setBookingPrice((BigDecimal) row[3]);
-            b.setFromLocation((String) row[4]);
-            b.setToLocation((String) row[5]);
-            b.setDateOfFlight(((java.sql.Date) row[6]).toLocalDate());
-            b.setNumSeatsBook((Integer) row[7]);
-            b.setStatus((String) row[8]); // This sets the status field!
-            bookings.add(b);
+
+        for (Booking source : results) {
+            Booking booking = new Booking();
+            booking.setBookId(source.getBookId());
+            booking.setUserId(source.getUserId());
+            booking.setFlight1(source.getFlight1());
+            booking.setFlight2(source.getFlight2());
+            booking.setSeatClass(source.getSeatClass());
+            booking.setBookingPrice(source.getBookingPrice());
+            booking.setFromLocation(source.getFromLocation());
+            booking.setVia(source.getVia());
+            booking.setToLocation(source.getToLocation());
+            booking.setDateOfFlight(source.getDateOfFlight());
+            booking.setNumSeatsBook(source.getNumSeatsBook());
+            booking.setStatus(cancelledIds.contains(source.getBookId()) ? "CANCELLED" : "CONFIRMED");
+            bookings.add(booking);
         }
+
         return bookings;
     }
+
+    long countByDateOfFlightAndStatus(LocalDate dateOfFlight, String status);
+
+    @Query("SELECT b FROM Booking b WHERE (b.flight1 = :flightId OR b.flight2 = :flightId) " +
+           "AND b.dateOfFlight >= :startDate AND b.dateOfFlight <= :endDate " +
+           "AND b.status = 'CONFIRMED'")
+    List<Booking> findByFlightAndDateRange(
+            @Param("flightId") Integer flightId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT b FROM Booking b WHERE b.dateOfFlight >= :startDate " +
+           "AND b.dateOfFlight <= :endDate AND b.status = 'CONFIRMED'")
+    List<Booking> findConfirmedBookingsByDateRange(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }

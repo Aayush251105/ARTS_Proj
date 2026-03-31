@@ -16,8 +16,8 @@ public class City {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cityid")
-    private Integer cityId; // Changed from Long to Integer
+    @Column(name = "cityid")   // map to existing column
+    private Integer cityId;
 
     @Column(name = "name")
     private String name;

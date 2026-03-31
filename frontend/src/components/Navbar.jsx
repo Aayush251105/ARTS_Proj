@@ -2,23 +2,50 @@ import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/navbar.css';
 
-const Navbar = () => {
+function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    !!localStorage.getItem("userId")
+  );
+
+  const role = localStorage.getItem("role");
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
 
   const handleLogout = () => {
-    localStorage.clear();
-    navigate('/login');
+    localStorage.removeItem("userId");
+    localStorage.removeItem("role");
+    localStorage.removeItem("username");
+    localStorage.removeItem("token");
+
+    setIsLoggedIn(false);
+    navigate("/");
   };
 
   return (
     <nav className="navbar">
-      <div className="logo-container">
-        <Link to="/" className="logo">ARTS</Link>
-      </div>
+      <Link to="/" className="logo-link">
+        <div className="logo">ARTS</div>
+      </Link>
 
       <div className="nav-links">
-        {username ? (
+        <Link to="/" className="nav-link">
+          Home
+        </Link>
+
+        {isLoggedIn && (
+          <Link to="/profile" className="nav-link">
+            Profile
+          </Link>
+        )}
+
+        {isLoggedIn && role === "ADMIN" && (
+          <Link to="/admin" className="nav-link dashboard-link">
+            <i className="fa-solid fa-gauge-high"></i>
+            Dashboard
+          </Link>
+        )}
+
+        {!isLoggedIn ? (
           <>
             <button className="nav-profile-btn" onClick={() => navigate('/profile')}>
               {username}'s Profile

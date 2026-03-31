@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../styles/signup.css"; 
+import "../styles/signup.css";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -10,6 +10,8 @@ function Login() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -19,15 +21,23 @@ function Login() {
         body: JSON.stringify(form),
       });
 
-      const data = await res.text();
-      if (data.startsWith("SUCCESS")) {
-        const parts = data.split(":");
-        localStorage.setItem("userId", parts[1]);
-        localStorage.setItem("role", parts[2]);
-        localStorage.setItem("username", parts[3]);
-        window.location.href = parts[2] === "ADMIN" ? "/admin" : "/";
+      const data = await res.json();
+
+      if (data.status === "SUCCESS") {
+        // Store JWT token and user info
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userId", data.userId);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("username", data.username);
+
+        // Redirect based on role
+        if (data.role === "ADMIN") {
+          window.location.href = "/admin";
+        } else {
+          window.location.href = "/";
+        }
       } else {
-        alert(data);
+        alert(data.message || "Login failed");
       }
     } catch (err) {
       alert("Server error");
@@ -66,10 +76,10 @@ function Login() {
             />
         </div>
 
-        <button type="submit">Login to Account</button>
-        
-        <p className="footer-text">
-          Don’t have an account? <a href="/signup">Sign Up</a>
+        <button type="submit" style={{marginBottom:"5px"}}>Login</button>
+        <hr />
+        <p style={{ textAlign: "center", fontSize: "14px" , marginTop:"5px" , backgroundColor:"transparent" }}>
+            Don't have an account? <a href="/signup" style={{backgroundColor:"transparent"}}>Sign Up</a>
         </p>
       </form>
     </div>
