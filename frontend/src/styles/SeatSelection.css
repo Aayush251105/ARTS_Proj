@@ -1,0 +1,227 @@
+/* src/styles/SeatSelection.css */
+
+.seat-page {
+  background: #F9FAFB;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.seat-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Flight Info Card */
+.seat-flight-info {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.seat-info-airline {
+  font-weight: 700;
+  font-size: 18px;
+  color: #111827;
+}
+
+.seat-info-route {
+  font-size: 14px;
+  color: #6B7280;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.seat-info-class {
+  background: #E0F2FE;
+  color: #0369A1;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Legend */
+.seat-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 10px 0;
+  padding: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.legend-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+.legend-box.available { background: #10B981; }
+.legend-box.selected { background: #3B82F6; }
+.legend-box.booked { background: #9CA3AF; }
+
+/* Grid Container */
+.seat-grid-container {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.seat-grid-title {
+  margin-bottom: 24px;
+  color: #111827;
+  font-size: 16px;
+}
+
+/* Grids */
+.grid-2x2 {
+  display: grid;
+  grid-template-columns: repeat(2, 35px) 25px repeat(2, 35px);
+  gap: 8px;
+}
+
+.seat-btn {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  border: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.seat-btn.available { background: #10B981; }
+.seat-btn.selected { background: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
+.seat-btn.booked { 
+  background: #9CA3AF; 
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.seat-btn.available:hover { filter: brightness(0.9); transform: translateY(-2px); }
+
+/* Selected Panel */
+.selected-summary-panel {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 10px;
+}
+
+.selected-seats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.selected-seats-list {
+  font-size: 16px;
+  color: #111827;
+  font-weight: 600;
+}
+
+.seat-badge {
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #1D4ED8;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-left: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.total-price-box {
+  text-align: right;
+}
+
+.total-price {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1E3A8A;
+}
+
+/* Forms */
+.passenger-forms {
+  border-top: 1px solid #E5E7EB;
+  padding-top: 24px;
+}
+
+.passenger-box {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  background: #F9FAFB;
+}
+
+.passenger-box h4 {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #111827;
+}
+
+.passenger-input {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  padding: 10px 12px;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  font-size: 15px;
+  margin-top: 8px;
+}
+
+.passenger-input:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+}
+
+.continue-btn {
+  background: #10B981;
+  color: #FFFFFF;
+  width: 100%;
+  padding: 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+  box-shadow: 0 4px 6px rgba(16,185,129,0.2);
+}
+
+.continue-btn:hover { 
+  background: #059669; 
+}

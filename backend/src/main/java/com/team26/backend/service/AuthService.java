@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.team26.backend.model.User;
 import com.team26.backend.repository.UserRepository;
+import com.team26.backend.util.EncryptionUtil;
 
 @Service
 public class AuthService {
@@ -34,6 +35,14 @@ public class AuthService {
             return "Invalid email format";
         }
 
+        // 🔐 Encrypt password before saving
+        try {
+            user.setPassword(EncryptionUtil.encrypt(user.getPassword()));
+        } catch (Exception e) {
+            System.err.println("Encryption failed: " + e.getMessage());
+            return "Error securing password";
+        }
+
         // ✅ Save user
         userRepository.save(user);
 
@@ -52,8 +61,21 @@ public class AuthService {
 
         User user = userOpt.get();
 
+        // 🔐 Password matching (supports both new encrypted records and existing plaintext ones)
+        boolean isMatch = false;
+        try {
+            String encryptedInput = EncryptionUtil.encrypt(password);
+            if (user.getPassword().equals(encryptedInput) || user.getPassword().equals(password)) {
+                isMatch = true;
+            }
+        } catch (Exception e) {
+            if (user.getPassword().equals(password)) {
+                isMatch = true;
+            }
+        }
+
         // ❌ wrong password
-        if (!user.getPassword().equals(password)) {
+        if (!isMatch) {
             return "Invalid password";
         }
 

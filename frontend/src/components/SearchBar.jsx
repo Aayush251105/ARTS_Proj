@@ -26,84 +26,126 @@ function SearchBar() {
   // ✅ Handle city select
   const handleCityChange = (e, type) => {
     const selectedCity = cities.find(
-      (c) => c.cityId === parseInt(e.target.value)
+        (c) => c.cityId === parseInt(e.target.value)
     );
 
-    setForm({ ...form, [type]: selectedCity });
+    if(!selectedCity) {
+      setForm((prev) => {
+         const copy = {...prev};
+         if(type === 'from') { copy.from = null; copy.fromId = null; copy.fromInternational = false;}
+         else { copy.to = null; copy.toId = null; copy.toInternational = false;}
+         return copy;
+      });
+      return;
+    }
+
+    setForm((prev) => {
+        if (type === "from") {
+        return {
+            ...prev,
+            from: selectedCity.name,
+            fromId: selectedCity.cityId,
+            fromInternational: selectedCity.isInternational
+        };
+        } else {
+        return {
+            ...prev,
+            to: selectedCity.name,
+            toId: selectedCity.cityId,
+            toInternational: selectedCity.isInternational
+        };
+        }
+    });
   };
 
   // ✅ Handle normal inputs
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    let val = e.target.value;
+    if (e.target.name === 'passengers') {
+       val = parseInt(val) || 1;
+    }
+    setForm({ ...form, [e.target.name]: val });
   };
 
   // ✅ Submit
   const handleSearch = (e) => {
     e.preventDefault();
-
-    // ❌ same city validation
-    if (form.from?.cityId === form.to?.cityId) {
+    if (!form.fromId || !form.toId) {
+        alert("Please select both cities");
+        return;
+    }
+    if (form.fromId === form.toId) {
         alert("From and To cities cannot be the same");
         return;
     }
 
-    localStorage.setItem("searchData", JSON.stringify(form));
+    const isInternationalTrip =
+        form.fromInternational || form.toInternational || false;
+
+    localStorage.setItem("searchData", JSON.stringify({
+        ...form,
+        isInternationalTrip,
+        time: Date.now()
+    }));
 
     navigate("/flights");
   };
 
   return (
-    <div className="search-container">
-      <form className="search-box" onSubmit={handleSearch}>
-        
-        {/* FROM */}
-        <select 
-        style={{width:"100px" , backgroundColor:"transparent"}}
-        onChange={(e) => handleCityChange(e, "from")} required>
-          <option value="">From</option>
-          {cities.map((city) => (
-            <option key={city.cityId} value={city.cityId}>
-              {city.name}
-            </option>
-          ))}
-        </select>
+    <div className="search-page">
+      <div className="search-card">
+        <form onSubmit={handleSearch}>
+          
+          <div className="search-grid-row">
+            <div className="search-field">
+              <label className="search-label">From</label>
+              <select name="from" className="search-input" value={form.fromId || ""} onChange={(e) => handleCityChange(e, "from")} required>
+                <option value="">Select Origin</option>
+                {cities.map((city) => (
+                  <option key={city.cityId} value={city.cityId}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="search-field">
+              <label className="search-label">To</label>
+              <select name="to" className="search-input" value={form.toId || ""} onChange={(e) => handleCityChange(e, "to")} required>
+                <option value="">Select Destination</option>
+                {cities.map((city) => (
+                  <option key={city.cityId} value={city.cityId}>
+                    {city.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-        {/* TO */}
-        <select
-        style={{width:"100px" , backgroundColor:"transparent"}}
-        onChange={(e) => handleCityChange(e, "to")} required>
-          <option value="">To</option>
-          {cities.map((city) => (
-            <option key={city.cityId} value={city.cityId}>
-              {city.name}
-            </option>
-          ))}
-        </select>
+          <div className="search-grid-row-three">
+            <div className="search-field">
+              <label className="search-label">Passengers</label>
+              <input type="number" name="passengers" min="1" max="50" className="search-input" value={form.passengers} onChange={handleChange} required />
+            </div>
 
-        {/* DATE */}
-        <input style={{width:"200px" , backgroundColor:"transparent" , border:"1px solid black"}} type="date" name="date" onChange={handleChange} required />
+            <div className="search-field">
+              <label className="search-label">Travel Class</label>
+              <select name="travelClass" className="search-input" value={form.travelClass} onChange={handleChange} required>
+                <option value="ECONOMY">Economy</option>
+                <option value="BUSINESS">Business</option>
+                <option value="FIRST">First</option>
+              </select>
+            </div>
 
-        {/* PASSENGERS */}
-        <input
-        style={{width:"100px" , backgroundColor:"transparent" , border:"1px solid black" }}
-          type="number"
-          name="passengers"
-          min="1"
-          defaultValue={1}
-          onChange={handleChange}
-        />
+            <div className="search-field">
+              <label className="search-label">Date</label>
+              <input type="date" name="date" className="search-input" value={form.date} onChange={handleChange} required />
+            </div>
+          </div>
 
-        {/* CLASS */}
-        <select
-        style={{width:"100px" , backgroundColor:"transparent"}}
-        name="travelClass" onChange={handleChange}>
-          <option value="ECONOMY">Economy</option>
-          <option value="BUSINESS">Business</option>
-          <option value="FIRST">First</option>
-        </select>
-
-        <button style={{width:"100px" , backgroundColor:"#3b82f6" , border:"1px solid black" , borderRadius:"5px" , height:"30px" , cursor:"pointer"}} type="submit">Search</button>
-      </form>
+          <button type="submit" className="search-btn">Search Flights</button>
+        </form>
+      </div>
     </div>
   );
 }

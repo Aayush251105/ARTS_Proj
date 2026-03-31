@@ -1,39 +1,43 @@
 import "../styles/navbar.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(
     !!localStorage.getItem("userId")
   );
 
+  useEffect(() => {
+    // Allows navbar to catch up if login state changes
+    setIsLoggedIn(!!localStorage.getItem("userId"));
+  }, []);
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("role");
-
+    localStorage.removeItem("username");
+    
     setIsLoggedIn(false);
-    navigate("/");
+    navigate("/login");
   };
 
   return (
     <nav className="navbar">
-      <div className="logo">ARTS</div>
+      <Link to="/" className="navbar-logo">
+         <span className="navbar-logo-icon">✈</span>
+         <span className="navbar-logo-text">Airline System</span>
+      </Link>
 
-      <div className="nav-links">
+      <div className="navbar-right">
         {!isLoggedIn ? (
           <>
-            <Link to="/login">
-              <button className="login-btn">Login</button>
-            </Link>
-
-            <Link to="/signup">
-              <button className="signup-btn">Sign Up</button>
-            </Link>
+            <Link to="/login" className="navbar-btn-ghost">Login</Link>
+            <Link to="/login" className="navbar-btn-solid">Sign Up</Link>
           </>
         ) : (
-          <button className="login-btn" onClick={handleLogout}>
+          <button className="navbar-btn-logout" onClick={handleLogout}>
             Logout
           </button>
         )}

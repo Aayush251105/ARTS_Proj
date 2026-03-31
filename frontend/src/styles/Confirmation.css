@@ -1,0 +1,272 @@
+.confirmation-page {
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  min-height: 80vh;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.confirmation-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: bounceScale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes bounceScale {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.confirmation-header h1 {
+  color: #10B981;
+  font-size: 32px;
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+.confirmation-header p {
+  color: #6B7280;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.home-btn {
+  margin-top: 24px;
+  background: #1E3A8A;
+  color: #FFFFFF;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(30, 58, 138, 0.2);
+}
+
+.home-btn:hover {
+  background: #1e40af;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(30, 58, 138, 0.3);
+}
+
+.passes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.boarding-pass-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Premium Ticket Design */
+.ticket-card {
+  display: flex;
+  background: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  position: relative;
+  min-height: 240px;
+  border: 1px solid #E5E7EB;
+}
+
+/* Middle Perforation Effect */
+.ticket-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  border-right: 2px dashed #D1D5DB;
+  position: relative;
+  background: #FFFFFF;
+}
+
+.ticket-main::before, .ticket-main::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  background: #F9FAFB;
+  border-radius: 50%;
+  border: 1px solid #E5E7EB;
+  z-index: 2;
+}
+
+.ticket-main::before {
+  top: -13px;
+  border-bottom-color: transparent;
+  border-left-color: transparent;
+  transform: rotate(45deg);
+}
+
+.ticket-main::after {
+  bottom: -13px;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  transform: rotate(45deg);
+}
+
+/* Header */
+.ticket-header {
+  background: #1E3A8A;
+  color: #FFFFFF;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.airline-brand {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.boarding-tag {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Body */
+.ticket-body {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.route-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.city-block {
+  text-align: left;
+}
+
+.city-block.right {
+  text-align: right;
+}
+
+.city-code {
+  font-size: 48px;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.city-name {
+  font-size: 15px;
+  color: #6B7280;
+  margin-top: 4px;
+  font-weight: 500;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flight-route-icon {
+  font-size: 28px;
+  color: #3B82F6;
+  opacity: 0.9;
+  transform: rotate(45deg);
+  margin-top: -10px;
+}
+
+/* Details Grid */
+.details-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.detail-item label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.detail-item .value {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.seat-highlight {
+  color: #10B981 !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+}
+
+/* Stub Segment */
+.ticket-stub {
+  width: 220px;
+  background: #F3F4F6;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 1px solid #FFFFFF;
+}
+
+.stub-info {
+  margin-bottom: 18px;
+}
+
+.stub-info label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6B7280;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stub-info .value {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1E3A8A;
+  letter-spacing: 1px;
+}
+
+.barcode-mock {
+  font-family: inherit;
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -3px;
+  color: #111827;
+  opacity: 0.7;
+  font-weight: 300;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-top: 10px;
+  text-align: center;
+}

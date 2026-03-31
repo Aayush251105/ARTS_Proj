@@ -1,10 +1,14 @@
-import './App.css'
+import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Home from './pages/Home';
-import Profile from './pages/Profile'; // 1. Import your new page
+import Home from "./pages/Home";
+import Profile from "./pages/Profile";
+import FlightList from "./pages/FlightList";
 import MainLayout from "./layouts/MainLayout";
+import SeatSelection from "./pages/SeatSelection";
+import Payment from "./pages/Payment";
+import Confirmation from "./pages/Confirmation";
 
 function App() {
   return (
@@ -32,6 +36,43 @@ function App() {
 
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+
+        {/* Flight List */}
+        <Route
+          path="/flights"
+          element={
+            <MainLayout>
+              <FlightList />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/seat-selection"
+          element={
+            <MainLayout>
+              <SeatSelection />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/payment"
+          element={
+            <MainLayout>
+              <Payment />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/confirmation"
+          element={
+            <MainLayout>
+              <Confirmation />
+            </MainLayout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

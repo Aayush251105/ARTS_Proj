@@ -12,7 +12,13 @@ INSERT INTO Users (Username, Password, Email, Role) VALUES
 ('john_doe', 'password', 'john.doe@example.com', 'PASSENGER'),
 ('jane_doe', 'password', 'jane.doe@example.com', 'PASSENGER'),
 ('alice', 'password', 'alice@example.com', 'PASSENGER'),
-('bob', 'password', 'bob@example.com', 'PASSENGER');
+('bob', 'password', 'bob@example.com', 'PASSENGER'),
+('charlie', 'password', 'charlie@example.com', 'PASSENGER'),
+('diana', 'password', 'diana@example.com', 'PASSENGER'),
+('eve', 'password', 'eve@example.com', 'PASSENGER'),
+('frank', 'password', 'frank@example.com', 'PASSENGER'),
+('grace', 'password', 'grace@example.com', 'PASSENGER'),
+('henry', 'password', 'henry@example.com', 'PASSENGER');
 
 -- 3. CITIES
 INSERT INTO City (Name, IsInternational) VALUES
@@ -25,15 +31,16 @@ INSERT INTO City (Name, IsInternational) VALUES
 INSERT INTO Crew (CrewCapacity) VALUES (10), (15), (20), (25), (12), (18);
 
 -- 5. FLIGHTS (IDs 1-8)
+-- Times only - flights repeat daily at these times
 INSERT INTO Flights (FromLocation, ToLocation, NumSeats, PFirst, PBusiness, PEcon, TakeoffT, LandingT, CrewID) VALUES
-('Delhi', 'Mumbai', 180, 5000.00, 3000.00, 1500.00, '2026-04-01 10:00:00', '2026-04-01 12:30:00', 1),
-('Mumbai', 'London', 250, 50000.00, 30000.00, 12000.00, '2026-04-02 14:00:00', '2026-04-03 02:00:00', 2),
-('Delhi', 'Bangalore', 200, 6000.00, 3500.00, 1800.00, '2026-04-05 08:00:00', '2026-04-05 10:15:00', 3),
-('Mumbai', 'Singapore', 300, 55000.00, 32000.00, 14000.00, '2026-04-06 15:30:00', '2026-04-07 05:00:00', 4),
-('London', 'New York', 280, 45000.00, 28000.00, 10000.00, '2026-04-07 18:00:00', '2026-04-08 08:00:00', 5),
-('Mumbai', 'Bangalore', 180, 4000.00, 2500.00, 1200.00, '2026-04-10 10:00:00', '2026-04-10 12:30:00', 6),
-('Delhi', 'Goa', 150, 7000.00, 4000.00, 2200.00, '2026-04-15 14:00:00', '2026-04-15 16:45:00', 1),
-('Bangalore', 'Delhi', 200, 6500.00, 3800.00, 1900.00, '2026-04-20 09:00:00', '2026-04-20 11:45:00', 2);
+('Delhi', 'Mumbai', 180, 5000.00, 3000.00, 1500.00, '10:00:00', '12:30:00', 1),
+('Mumbai', 'London', 250, 50000.00, 30000.00, 12000.00, '14:30:00', '02:00:00', 2),
+('Delhi', 'Bangalore', 200, 6000.00, 3500.00, 1800.00, '08:00:00', '10:15:00', 3),
+('Mumbai', 'Singapore', 300, 55000.00, 32000.00, 14000.00, '15:30:00', '05:00:00', 4),
+('London', 'New York', 280, 45000.00, 28000.00, 10000.00, '18:00:00', '08:00:00', 5),
+('Mumbai', 'Bangalore', 180, 4000.00, 2500.00, 1200.00, '10:00:00', '12:30:00', 6),
+('Delhi', 'Goa', 150, 7000.00, 4000.00, 2200.00, '14:00:00', '16:45:00', 1),
+('Bangalore', 'Delhi', 200, 6500.00, 3800.00, 1900.00, '09:00:00', '11:45:00', 2);
 
 -- 6. BOOKINGS
 -- Mapping UserIDs and FlightIDs precisely based on the order above
@@ -51,17 +58,18 @@ INSERT INTO Booking (UserID, Flight1, SeatClass, BookingPrice, FromLocation, ToL
 
 -- 7. PASSENGERS
 -- Linked to BookingIDs 1 through 10
+-- Numeric seat format: 1, 2, 15, etc.
 INSERT INTO Passengers (BookingID, PassName, Seat1, Passport) VALUES
-(1, 'Randy Orton', '12F', 'RKO999'),
-(2, 'Neil', '2A', 'SNU2026'),
-(3, 'Neil', '14C', 'SNU2026'),
-(4, 'Neil', '1A', 'SNU2026'),
-(5, 'Vikram', '22B', 'RAT777'),
-(6, 'Scooter Jesus', '3D', 'HEAVEN1'),
-(7, 'John Doe', '15E', 'JD123456'),
-(8, 'Jane Doe', '15F', 'JD654321'),
-(9, 'Alice', '10A', 'ALICE123'),
-(10, 'Bob', '10B', 'BOB456789');
+(1, 'Randy Orton', 12, 'RKO999'),
+(2, 'Neil', 2, 'SNU2026'),
+(3, 'Neil', 14, 'SNU2026'),
+(4, 'Neil', 1, 'SNU2026'),
+(5, 'Vikram', 22, 'RAT777'),
+(6, 'Scooter Jesus', 3, 'HEAVEN1'),
+(7, 'John Doe', 15, 'JD123456'),
+(8, 'Jane Doe', 16, 'JD654321'),
+(9, 'Alice', 10, 'ALICE123'),
+(10, 'Bob', 11, 'BOB456789');
 
 -- 8. CANCELLATIONS
 INSERT INTO Cancellations (BookID, RefundAmt) VALUES
