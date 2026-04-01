@@ -154,6 +154,12 @@ public class BookingController {
         return bookingRepository.findByUserIdWithStatus(userId);
     }
 
+    // Get passengers for a specific booking
+    @GetMapping("/{bookId}/passengers")
+    public ResponseEntity<List<Passenger>> getPassengersByBookingId(@PathVariable Integer bookId) {
+        return ResponseEntity.ok(passengerRepository.findByBookingId(bookId));
+    }
+
     // CANCEL a booking
     @DeleteMapping("/{bookId}")
     public ResponseEntity<?> deleteBooking(@PathVariable Integer bookId) {
@@ -179,6 +185,12 @@ public class BookingController {
     @GetMapping("/count/today")
     public long countBookingsToday() {
         return bookingRepository.countByDateOfFlightAndStatus(LocalDate.now(), "CONFIRMED");
+    }
+
+    // Count distinct active flights where dateOfFlight == today from bookings
+    @GetMapping("/active-flights/count/today")
+    public long countActiveFlightsToday() {
+        return bookingRepository.countActiveFlightsByDate(LocalDate.now());
     }
 
     /**

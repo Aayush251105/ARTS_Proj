@@ -13,6 +13,8 @@ import com.team26.backend.model.Passenger;
 @Repository
 public interface PassengerRepository extends JpaRepository<Passenger, Integer> {
 
+    List<Passenger> findByBookingId(Integer bookingId);
+
     @Query("""
         SELECT p.seat1, p.seat2, b.flight1, b.flight2
         FROM Passenger p, Booking b

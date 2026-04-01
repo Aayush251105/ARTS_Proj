@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Select from "react-select";
 import AdminLayout from "../../layouts/AdminLayout";
 import "../../styles/admin.css";
 
@@ -67,6 +68,11 @@ function AdminPassengers() {
 
   const hasResults = passengersByDate && Object.keys(passengersByDate).length > 0;
 
+  const flightOptions = flights.map((f) => ({
+    value: f.flightId,
+    label: `FL-${f.flightId} : ${f.fromLocation} → ${f.toLocation}`,
+  }));
+
   return (
     <AdminLayout>
       <div className="admin-subpage">
@@ -85,14 +91,29 @@ function AdminPassengers() {
           <div className="occupancy-form" style={{ gridTemplateColumns: '2fr 1fr 1fr auto' }}>
             <div className="form-group">
               <label>Flight ID</label>
-              <select value={selectedFlight} onChange={(e) => setSelectedFlight(e.target.value)}>
-                <option value="">— Select a Flight —</option>
-                {flights.map((f) => (
-                  <option key={f.flightId} value={f.flightId}>
-                    FL-{f.flightId} : {f.fromLocation} → {f.toLocation}
-                  </option>
-                ))}
-              </select>
+              <Select
+                options={flightOptions}
+                value={flightOptions.find(o => o.value == selectedFlight) || null}
+                onChange={(option) => setSelectedFlight(option ? option.value : "")}
+                placeholder="— Select a flight —"
+                isClearable
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    borderRadius: "var(--card-radius)",
+                    borderColor: "var(--border-color)",
+                    minHeight: "40px",
+                  }),
+                  option: (base) => ({
+                    ...base,
+                    color: "var(--text-dark)"
+                  }),
+                  singleValue: (base) => ({
+                    ...base,
+                    color: "var(--text-dark)"
+                  })
+                }}
+              />
             </div>
             <div className="form-group">
               <label>From Date</label>

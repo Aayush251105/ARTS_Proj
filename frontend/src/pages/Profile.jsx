@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import '../styles/Profile.css';
+import '../styles/Confirmation.css';
+import { Ticket } from './Confirmation.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
@@ -11,6 +13,9 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
   const [bookings, setBookings] = useState([]);
+  const [expandedBookingId, setExpandedBookingId] = useState(null);
+  const [boardingPasses, setBoardingPasses] = useState([]);
+  const [fetchingPasses, setFetchingPasses] = useState(false);
   const [user, setUser] = useState({
     userID: localStorage.getItem("userId") || localStorage.getItem("userID"),
     role: localStorage.getItem("role") || "Passenger",
@@ -96,6 +101,26 @@ const Profile = () => {
     }
   };
 
+  const handleTogglePasses = async (booking) => {
+    if (expandedBookingId === booking.bookId) {
+      setExpandedBookingId(null);
+      setBoardingPasses([]);
+      return;
+    }
+    setExpandedBookingId(booking.bookId);
+    setFetchingPasses(true);
+    try {
+      const res = await axios.get(`http://localhost:8080/api/bookings/${booking.bookId}/passengers`);
+      setBoardingPasses(res.data);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to fetch boarding passes.");
+      setBoardingPasses([]);
+    } finally {
+      setFetchingPasses(false);
+    }
+  };
+
   if (loading) return <div className="profile-page-wrapper"><div className="profile-container"><p>Loading...</p></div></div>;
 
   if (!user.userID) {
@@ -163,29 +188,84 @@ const Profile = () => {
 
         <h2 className="section-title">Your Booked Trips</h2>
         {bookings.map((b) => (
-          <div key={b.bookId} className={`flight-card ${b.status === 'CANCELLED' ? 'cancelled-card' : ''}`}>
-            <div className="route-section">
-              <div className="city-box">
-                {b.status === 'CANCELLED' && <span className="cancelled-badge">CANCELLED</span>}
-                <h3>{b.fromLocation}</h3>
-                <span>Origin</span>
+          <div key={b.bookId} style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+            <div 
+              className={`flight-card ${b.status === 'CANCELLED' ? 'cancelled-card' : ''}`}
+              onClick={() => { if (b.status !== 'CANCELLED') handleTogglePasses(b); }}
+              style={{ cursor: b.status === 'CANCELLED' ? 'not-allowed' : 'pointer', marginBottom: 0, transition: 'transform 0.2s', border: expandedBookingId === b.bookId ? '2px solid var(--indigo-500, #6366f1)' : '' }}
+            >
+              <div className="route-section">
+                <div className="city-box">
+                  {b.status === 'CANCELLED' && <span className="cancelled-badge">CANCELLED</span>}
+                  <h3>{b.fromLocation}</h3>
+                  <span>Origin</span>
+                </div>
+                <div className="plane-divider">✈</div>
+                <div className="city-box">
+                  <h3>{b.toLocation}</h3>
+                  <span>Destination</span>
+                </div>
               </div>
-              <div className="plane-divider">✈</div>
-              <div className="city-box">
-                <h3>{b.toLocation}</h3>
-                <span>Destination</span>
+              <div className="action-section">
+                <div className="price-info">
+                  <div className={`price-tag ${b.status === 'CANCELLED' ? 'price-tag-cancelled' : ''}`}>₹{b.bookingPrice}</div>
+                  <small className="flight-date">{new Date(b.dateOfFlight).toDateString()}</small>
+                </div>
+                {b.status === 'CANCELLED'
+                  ? <span className="refund-status">Refund Processed</span>
+                  : <button className="cancel-btn" onClick={(e) => { e.stopPropagation(); handleCancel(b); }}>Cancel</button>
+                }
               </div>
             </div>
-            <div className="action-section">
-              <div className="price-info">
-                <div className={`price-tag ${b.status === 'CANCELLED' ? 'price-tag-cancelled' : ''}`}>₹{b.bookingPrice}</div>
-                <small className="flight-date">{new Date(b.dateOfFlight).toDateString()}</small>
+
+            {/* Passes Dropdown */}
+            {expandedBookingId === b.bookId && (
+              <div className="passes-container" style={{ margin: '8px 0', padding: '24px 16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
+                {fetchingPasses ? (
+                  <div style={{ textAlign: "center", padding: "20px", color: "#64748b" }}>Loading passes...</div>
+                ) : (
+                  boardingPasses.length > 0 ? (
+                    boardingPasses.map((p, idx) => {
+                      const realPnr = String(p.pnr).padStart(6, '0');
+                      return (
+                        <div key={idx} className="boarding-pass-group" style={{ marginBottom: idx === boardingPasses.length - 1 ? 0 : "32px" }}>
+                          <Ticket 
+                            passengerName={p.passName}
+                            pnr={realPnr}
+                            bookId={b.bookId}
+                            seat={p.seat1 || "Unassigned"}
+                            from={b.fromLocation}
+                            to={b.via ? b.via : b.toLocation}
+                            date={b.dateOfFlight}
+                            airline="AIRLINE FLIGHT"
+                            flightNum={b.flight1 || "TBA"}
+                            travelClass={b.seatClass || "ECONOMY"}
+                          />
+                          {b.flight2 && (
+                            <div style={{ marginTop: '24px' }}>
+                              <Ticket 
+                                passengerName={p.passName}
+                                pnr={realPnr}
+                                bookId={b.bookId}
+                                seat={p.seat2 || "Unassigned"}
+                                from={b.via ? b.via : b.fromLocation}
+                                to={b.toLocation}
+                                date={b.dateOfFlight}
+                                airline="CONNECTING FLIGHT"
+                                flightNum={b.flight2 || "TBA"}
+                                travelClass={b.seatClass || "ECONOMY"}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })
+                  ) : (
+                    <div style={{ textAlign: "center", color: "#64748b" }}>No passes found.</div>
+                  )
+                )}
               </div>
-              {b.status === 'CANCELLED'
-                ? <span className="refund-status">Refund Processed</span>
-                : <button className="cancel-btn" onClick={() => handleCancel(b)}>Cancel</button>
-              }
-            </div>
+            )}
           </div>
         ))}
         {bookings.length === 0 && <p className="empty-msg">No active bookings found.</p>}
