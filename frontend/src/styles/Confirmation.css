@@ -189,7 +189,7 @@
   font-size: 28px;
   color: #3B82F6;
   opacity: 0.9;
-  transform: rotate(45deg);
+  /* transform: rotate(45deg); */
   margin-top: -10px;
 }
 
