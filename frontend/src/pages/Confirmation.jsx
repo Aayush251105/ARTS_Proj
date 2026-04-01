@@ -23,7 +23,7 @@ function Confirmation() {
   return (
     <div className="confirmation-page">
       <div className="confirmation-header">
-         <div className="success-icon">✅</div>
+         <div className="success-icon"><i className="fa-solid fa-circle-check" style={{ color: "#10b981" }}></i></div>
          <h1>Booking Confirmed!</h1>
          <p>Your tickets have been successfully issued. Ready for takeoff!</p>
          <button className="home-btn" onClick={() => navigate("/")}>Return to Home</button>
@@ -78,7 +78,7 @@ function Ticket({ passengerName, pnr, bookId, seat, from, to, date, airline, fli
     <div className="ticket-card">
        <div className="ticket-main">
           <div className="ticket-header">
-             <div className="airline-brand">✈️ {airline}</div>
+             <div className="airline-brand"><i className="fa-solid fa-plane-departure"></i> {airline}</div>
              <div className="boarding-tag">BOARDING PASS</div>
           </div>
           

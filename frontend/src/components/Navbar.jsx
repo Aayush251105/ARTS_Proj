@@ -27,7 +27,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-logo">
-         <span className="navbar-logo-icon">✈</span>
+         <span className="navbar-logo-icon"><i className="fa-solid fa-plane"></i></span>
          <span className="navbar-logo-text">Airline System</span>
       </Link>
 
@@ -45,7 +45,7 @@ function Navbar() {
               </Link>
             )}
             <Link to="/profile" className="navbar-btn-ghost">
-              👤 {username || "Profile"}
+              <i className="fa-solid fa-user"></i> {username || "Profile"}
             </Link>
             <button className="navbar-btn-logout" onClick={handleLogout}>
               Logout

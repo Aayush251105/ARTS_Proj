@@ -157,7 +157,7 @@ function Payment() {
 
       {/* ✈️ Flight Rules & Refund Policy */}
       <div style={rulesCardStyle}>
-        <h3 style={rulesTitleStyle}>✈️ Basic Flight Rules</h3>
+        <h3 style={rulesTitleStyle}><i className="fa-solid fa-plane-circle-check"></i> Basic Flight Rules</h3>
         <ul style={rulesListStyle}>
           {[
             "Passengers must carry a valid government-issued ID during check-in and boarding.",
@@ -175,7 +175,7 @@ function Payment() {
 
         <div style={dividerStyle} />
 
-        <h3 style={refundTitleStyle}>💰 Refund Policy</h3>
+        <h3 style={refundTitleStyle}><i className="fa-solid fa-coins"></i> Refund Policy</h3>
         <div style={refundGridStyle}>
           {[
             { pct: "75%", label: "Refund", when: "Cancelled more than 2 days before departure", color: "#16a34a", bg: "#f0fdf4", border: "#bbf7d0" },

@@ -367,9 +367,9 @@ function SeatSelection() {
 
                   {isInternational && (
                      <div style={{marginTop: '20px', padding: '16px', borderRadius: '8px', background: '#F0F9FF', border: '1px solid #BAE6FD', display: 'inline-block'}}>
-                        <label style={{display: 'block', fontSize: '13px', color: '#0369A1', fontWeight: '700', marginBottom: '8px'}}>🌐 International Flight — Passport Required</label>
+                        <label style={{display: 'block', fontSize: '13px', color: '#0369A1', fontWeight: '700', marginBottom: '8px'}}><i className="fa-solid fa-earth-americas"></i> International Flight — Passport Required</label>
                         <div style={{display: 'flex', alignItems: 'center', background: '#FFFFFF', border: '1px solid #7DD3FC', borderRadius: '6px', overflow: 'hidden'}}>
-                           <span style={{padding: '10px 12px', background: '#E0F2FE', borderRight: '1px solid #7DD3FC', fontSize: '16px'}}>🛂</span>
+                           <span style={{padding: '10px 12px', background: '#E0F2FE', borderRight: '1px solid #7DD3FC', fontSize: '16px'}}><i className="fa-solid fa-passport"></i></span>
                            <input
                               placeholder="Passport (6-20 chars)"
                               className="passenger-input"
