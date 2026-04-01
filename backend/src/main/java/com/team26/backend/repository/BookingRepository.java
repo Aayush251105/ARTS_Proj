@@ -38,6 +38,13 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
     long countByDateOfFlightAndStatus(LocalDate dateOfFlight, String status);
 
+    @Query(value = "SELECT COUNT(DISTINCT f) FROM (" +
+                   "SELECT flight1 AS f FROM Booking WHERE dateofflight = :date AND status = 'CONFIRMED' AND flight1 IS NOT NULL " +
+                   "UNION " +
+                   "SELECT flight2 AS f FROM Booking WHERE dateofflight = :date AND status = 'CONFIRMED' AND flight2 IS NOT NULL " +
+                   ") AS active_flights", nativeQuery = true)
+    long countActiveFlightsByDate(@Param("date") LocalDate date);
+
     @Query("SELECT b FROM Booking b WHERE (b.flight1 = :flightId OR b.flight2 = :flightId) " +
            "AND b.dateOfFlight >= :startDate AND b.dateOfFlight <= :endDate " +
            "AND b.status = 'CONFIRMED'")

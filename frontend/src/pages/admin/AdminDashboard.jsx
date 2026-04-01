@@ -9,12 +9,20 @@ import "../../styles/admin.css";
 function AdminDashboard() {
   const username = localStorage.getItem("username") || "Admin";
   const [bookingsToday, setBookingsToday] = useState("...");
+  const [activeFlights, setActiveFlights] = useState("...");
 
   useEffect(() => {
+    // Fetch count of bookings today
     fetch("http://localhost:8080/api/bookings/count/today")
       .then((res) => res.json())
       .then((count) => setBookingsToday(count))
       .catch(() => setBookingsToday(0));
+
+    // Fetch count of active scheduled flights today
+    fetch("http://localhost:8080/api/bookings/active-flights/count/today")
+      .then((res) => res.json())
+      .then((count) => setActiveFlights(count))
+      .catch(() => setActiveFlights(0));
   }, []);
 
   const cards = [
@@ -62,8 +70,8 @@ function AdminDashboard() {
       <div className="dashboard-stats" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
         <div className="stat-card">
           <div className="stat-label">Total Flights</div>
-          <div className="stat-value">8</div>
-          <div className="stat-subtitle">Active routes</div>
+          <div className="stat-value">{activeFlights}</div>
+          <div className="stat-subtitle">Scheduled today</div>
         </div>
         <div className="stat-card">
           <div className="stat-label">Bookings Today</div>

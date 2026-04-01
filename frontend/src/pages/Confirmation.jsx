@@ -5,6 +5,7 @@ import "../styles/Confirmation.css";
 function Confirmation() {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
+  const [passengersDB, setPassengersDB] = useState([]);
 
   useEffect(() => {
     const confirmationData = JSON.parse(localStorage.getItem("confirmationData"));
@@ -13,6 +14,12 @@ function Confirmation() {
       return;
     }
     setData(confirmationData);
+
+    // Fetch passengers from DB to get the actual generated PNRs
+    fetch(`http://localhost:8080/api/bookings/${confirmationData.bookId}/passengers`)
+      .then(res => res.json())
+      .then(setPassengersDB)
+      .catch(console.error);
   }, [navigate]);
 
   if (!data) return <div style={{textAlign: "center", marginTop: "100px"}}>Generating Boarding Passes...</div>;
@@ -31,8 +38,9 @@ function Confirmation() {
 
       <div className="passes-container">
         {bookingData.passengers.map((passenger, index) => {
-           // Generate pseudo PNR string based on bookId and passenger index representing a Passenger ID PNR
-           const pnr = `PNR${bookId}0${index + 1}X`;
+           // Grab the actual PNR from the DB or fallback to skeleton if not yet loaded
+           const dbPass = passengersDB.find(p => p.passName === passenger.name) || passengersDB[index];
+           const pnr = dbPass ? String(dbPass.pnr).padStart(6, '0') : "......";
            
            return (
               <div key={index} className="boarding-pass-group">
@@ -73,7 +81,7 @@ function Confirmation() {
   );
 }
 
-function Ticket({ passengerName, pnr, bookId, seat, from, to, date, airline, flightNum, travelClass }) {
+export function Ticket({ passengerName, pnr, bookId, seat, from, to, date, airline, flightNum, travelClass }) {
   return (
     <div className="ticket-card">
        <div className="ticket-main">
