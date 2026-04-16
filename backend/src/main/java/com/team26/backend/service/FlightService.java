@@ -45,7 +45,7 @@ public class FlightService {
         }
 
         // ---------------- CONNECTING ----------------
-        List<Flight> firstLegs = flightRepository.findByFromLocation(from);
+        List<Flight> firstLegs = flightRepository.findByFromLocationIgnoreCase(from);
 
         for (Flight f1 : firstLegs) {
 
@@ -137,13 +137,13 @@ public class FlightService {
     for (Object[] row : rows) {
 
         if (row[0] != null) {
-            int seatNum = ((Number) row[0]).intValue();
-            bookedSeats.add(seatNum);
+            String seatStr = row[0].toString().replaceAll("[^0-9]", "");
+            if (!seatStr.isEmpty()) bookedSeats.add(Integer.parseInt(seatStr));
         }
 
         if (row[1] != null) {
-            int seatNum = ((Number) row[1]).intValue();
-            bookedSeats.add(seatNum);
+            String seatStr = row[1].toString().replaceAll("[^0-9]", "");
+            if (!seatStr.isEmpty()) bookedSeats.add(Integer.parseInt(seatStr));
         }
     }
 
