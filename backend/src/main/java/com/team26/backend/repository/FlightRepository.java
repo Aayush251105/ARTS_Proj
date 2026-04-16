@@ -12,4 +12,6 @@ public interface FlightRepository extends JpaRepository<Flight, Integer> {
 
     List<Flight> findByFromLocation(String from);
 
+    List<Flight> findByFromLocationIgnoreCase(String from);
+
 }
