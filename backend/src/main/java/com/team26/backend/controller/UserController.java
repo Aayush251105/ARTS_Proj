@@ -45,18 +45,10 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody Map<String, String> editData) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName(); // This usually gets the 'sub' or username from your JWT
-
         Optional<User> userOpt = userRepository.findById(id);
     
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-
-            // 2. SECURITY CHECK: Does the logged-in user match the user being updated?
-            if (!user.getUsername().equals(currentUsername)) {
-                return ResponseEntity.status(403).body("You are not authorized to edit this profile.");
-            }
 
             if (editData.containsKey("username") && !editData.get("username").trim().isEmpty()) {
                 user.setUsername(editData.get("username"));
