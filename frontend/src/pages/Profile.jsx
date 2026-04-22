@@ -39,7 +39,7 @@ const Profile = () => {
           email: userRes.data.email || '',
           password: ''
         });
-        setBookings(bookingRes.data);
+        setBookings([...bookingRes.data].reverse());
       } catch (err) {
         console.error("Initialization failed:", err);
       } finally {
