@@ -63,6 +63,8 @@ function SearchBar() {
     setForm({ ...form, [e.target.name]: val });
   };
 
+  const today = new Date().toISOString().split('T')[0];
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (!form.fromId || !form.toId) {
@@ -71,6 +73,10 @@ function SearchBar() {
     }
     if (form.fromId === form.toId) {
         alert("From and To cities cannot be the same");
+        return;
+    }
+    if (form.date < today) {
+        alert("You cannot book a flight for a past date.");
         return;
     }
 
@@ -134,7 +140,7 @@ function SearchBar() {
 
             <div className="search-field">
               <label className="search-label">Date</label>
-              <input type="date" name="date" className="search-input" value={form.date} onChange={handleChange} required />
+              <input type="date" name="date" className="search-input" value={form.date} onChange={handleChange} min={today} required />
             </div>
           </div>
 
